@@ -1,0 +1,11 @@
+FROM node:20-alpine
+WORKDIR /app
+
+# Instala dependências primeiro (cache)
+COPY package*.json ./
+RUN npm ci
+
+# Copia todo o código, incluindo o submódulo
+COPY . .
+
+CMD ["npm", "run", "dev", "-L"]
