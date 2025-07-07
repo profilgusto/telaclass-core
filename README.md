@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Telaclass Core
 
-## Getting Started
+Monorepo de **código-fonte** do Telaclass v2  
+(Stack: Next.js 15, React 19, Tailwind CSS v4, shadcn/ui, MDX v3).  
+O material didático é trazido como submódulo Git (`content/`).
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```text
+📁 estrutura (raiz)
+├── app/                 # rotas e layouts (App Router)
+├── content/             # submódulo → telaclass-content
+├── docker-compose.yml   # ambiente dev em Docker
+├── Dockerfile.dev       # imagem dev (Node 20-alpine)
+├── Dockerfile           # imagem produção
+├── next.config.ts
+└── …
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Stack & ferramentas
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Camada        | Versão / detalhe                       |
+|---------------|----------------------------------------|
+| Runtime       | **Node 20-alpine** (Docker)            |
+| Framework     | **Next.js 15** (App Router)            |
+| UI            | **React 19** + **shadcn/ui**           |
+| CSS           | **Tailwind CSS v4**                    |
+| Conteúdo      | **MDX v3** + player custom (ReactFlow) |
+| Linguagem     | **TypeScript** (`@/*` import-alias)    |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Como rodar em desenvolvimento
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+# clone com submódulos
+git clone --recurse-submodules git@github.com:<SEU_USER>/telaclass-core.git
+cd telaclass-core
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# subir via Docker
+docker compose up --build   # 1ª vez (instala dependências)
+# depois: docker compose up
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Aplicação em <http://localhost:3000>.
 
-## Deploy on Vercel
+### Comandos mais usados
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Ação              | Comando                 |
+|-------------------|-------------------------|
+| Dev server        | `npm run dev`           |
+| Lint              | `npm run lint`          |
+| Build estático    | `npm run build`         |
+| Start produção    | `npm start` (via Docker)|
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Atualizar o submódulo de conteúdo
+
+```bash
+git submodule update --remote --merge
+```
+
+---
+
+## Build de produção
+
+```bash
+docker build -t telaclass-core:prod .
+docker run -p 3000:3000 telaclass-core:prod
+```
+
+---
+
+## Roadmap (sprints)
+
+| Sprint | Status | Foco principal                                |
+|-------:|:------:|-----------------------------------------------|
+| 0 | ✅ | Migração conteúdo, submódulo, Docker bootstrap        |
+| 1 | 🚧 | Tailwind 4 + shadcn/ui, layout base, dark mode        |
+| 2 | ⏳ | Auth.js, MongoDB modelos, dashboard administradores   |
+
+---
+
+## Licença
+
+Código sob MIT. O conteúdo didático vive em **telaclass-content** (repositório privado) e possui licença própria.
