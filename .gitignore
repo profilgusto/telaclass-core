@@ -49,3 +49,6 @@ next-env.d.ts
 .vscode/
 .idea/
 Thumbs.db
+
+# conteudo montado externamente
+/content 
