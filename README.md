@@ -7,6 +7,7 @@ O material didático é trazido como submódulo Git (`content/`).
 ```text
 📁 estrutura (raiz)
 ├── app/                 # rotas e layouts (App Router)
+├── components/          # UI reutilizável
 ├── content/             # submódulo → telaclass-content
 ├── docker-compose.yml   # ambiente dev em Docker
 ├── Dockerfile.dev       # imagem dev (Node 20-alpine)
