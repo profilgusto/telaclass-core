@@ -19,7 +19,7 @@ export function ThemeToggle() {
     <button
       aria-label="Alternar tema"
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      className="inline-flex items-center p-2 rounded-md border hover:bg-gray-100 dark:hover:bg-gray-800"
+      className="inline-flex items-center p-2 rounded-md border hover:bg-gray-300 dark:hover:bg-gray-700"
     >
       {!mounted ? (
         <Sun className="h-4 w-4" />
