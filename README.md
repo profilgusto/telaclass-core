@@ -92,4 +92,3 @@ docker run -p 3000:3000   -v /ABSOLUTE/PATH/telaclass-content:/app/content:ro   
 ## Licença
 
 Código sob MIT. O conteúdo didático (arquivos em `content/`) reside fora deste repositório e possui licença própria.
-'
