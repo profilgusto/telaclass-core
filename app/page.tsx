@@ -13,9 +13,14 @@ export default function Home() {
         </div>
 
         <div>
-          <Button variant='default'>Olá, shadcn!</Button>
+          <Button variant='default'>Olá, Julia!</Button>
         </div>
 
+      <Button
+        className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-foreground)] text-[hsl(222_47%_11%)] rounded-[var(--radius-md)]"
+      >
+        Botão Tokenizado
+      </Button>
         
       </main>
       
