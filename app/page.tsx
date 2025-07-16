@@ -13,7 +13,7 @@ export default function Home() {
         </div>
 
         <div>
-          <Button variant='default'>Olá, Julia!</Button>
+          <Button variant='default'>Olá, Júlia!</Button>
         </div>
 
       <Button
@@ -30,3 +30,4 @@ export default function Home() {
     </div>
   );
 }
+''

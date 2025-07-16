@@ -20,7 +20,7 @@
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(61.813% 0.16966 143.061);
+  --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
@@ -38,6 +38,17 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+    /* —— Spacing tokens —— */
+  --space-xs: 0.25rem; /* 4 px  */
+  --space-sm: 0.5rem;  /* 8 px  */
+  --space-md: 1rem;    /* 16 px */
+  --space-lg: 2rem;    /* 32 px */
+
+  /* —— Z-index tokens —— */
+  --z-overlay: 50; /* dropdown / popover */
+  --z-modal:   60; /* modal / dialog     */
+  --z-toast:   70; /* toast notification */
 }
 
 @theme inline {
@@ -78,6 +89,17 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+    /* Spacing */
+  --space-xs: var(--space-xs);
+  --space-sm: var(--space-sm);
+  --space-md: var(--space-md);
+  --space-lg: var(--space-lg);
+
+  /* Z-index */
+  --z-overlay: var(--z-overlay);
+  --z-modal: var(--z-modal);
+  --z-toast: var(--z-toast);
 }
 
 .dark {
