@@ -1,34 +1,39 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ThemeToggle } from '@/components/theme-toggle';
 import { Menu } from 'lucide-react';
-import { useMediaQuery } from '@/lib/use-media-query';
+
+import { ThemeToggle } from '@/components/theme-toggle';
 import { MobileSidebar } from '@/components/mobile-sidebar';
 
 export function Header() {
-    const pathname = usePathname();
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);          // controla o Drawer
 
-    const links = [
-        { href: '/', label: 'Início' },
-        { href: '/disciplinas', label: 'Disciplinas' },
-        { href: '/sobre', label: 'Sobre' },
-    ];
+  const links = [
+    { href: '/', label: 'Início' },
+    { href: '/disciplinas', label: 'Disciplinas' },
+    { href: '/sobre', label: 'Sobre' },
+  ];
 
-    return (
-    <header className="sticky top-0 z-[var(--z-overlay)] bg-[var(--sidebar)]
-                        text-[var(--sidebar-foreground)] border-b
-                        border-[var(--sidebar-border)]">
-                            
-      <div className="mx-auto flex h-14 max-w-screen-2xl items-center px-[var(--space-md)] gap-[var(--space-lg)]">
-        {/* Logo / marca */}
+  return (
+    <header
+      className="sticky top-0 z-[var(--z-overlay)] bg-[var(--sidebar)]
+                 text-[var(--sidebar-foreground)] border-b border-[var(--sidebar-border)]"
+    >
+      <div
+        className="mx-auto flex h-14 max-w-screen-2xl items-center
+                   px-[var(--space-lg)] gap-[var(--space-lg)]"
+      >
+        {/* Logo */}
         <Link href="/" className="font-semibold text-lg tracking-tight">
           Telaclass
         </Link>
 
-        {/* Navegação (desktop) */}
-        <nav className="hidden md:flex gap-[var(--space-md)]">
+        {/* Navegação desktop */}
+        <nav className="hidden md:flex gap-[var(--space-md)] ml-[var(--space-lg)]">
           {links.map(({ href, label }) => (
             <Link
               key={href}
@@ -42,30 +47,24 @@ export function Header() {
           ))}
         </nav>
 
-        {/* “hamburger” para mobile */}
-        {!open && (
-          <button onClick={() => setOpen(true)} className="md:hidden p-2">
-            <Menu className="h-5 w-5" />
-          </button>
-        )}
+        {/* Espaço elástico empurra os ícones para a direita */}
+        <div className="flex-1" />
 
-        <MobileSidebar />
-        
-
-        {/* Botão sanduiche do menu lateral */}
-        {!isOpen && (
-          <button 
-            onClick={() => setOpen(true)}
-            className='md:hidden p-2 rounded hover:bg-gray-100'
-            aria-label='Abrir menu'
-          >
-            <Menu className='h-5 w-5' />
-          </button>
-        )}
+        {/* Botão hamburger (só mobile) */}
+        <button
+          onClick={() => setOpen(true)}
+          className="md:hidden p-2 rounded hover:bg-gray-100"
+          aria-label="Abrir menu"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
 
         {/* Theme toggle */}
         <ThemeToggle />
+
+        {/* Drawer mobile */}
+        <MobileSidebar open={open} setOpen={setOpen} />
       </div>
     </header>
-    );
+  );
 }
