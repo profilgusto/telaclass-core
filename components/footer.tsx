@@ -5,7 +5,7 @@ export function Footer () {
                       flex flex-col sm:flex-row items-center justify-between gap-[var(--space-sm)]">
         <span>© {new Date().getFullYear()} Telaclass · UFSJ</span>
         <a
-          href="https://github.com/filgusto/telaclass"
+          href="https://github.com/profilgusto/telaclass-core"
           target="_blank"
           rel="noreferrer"
           className="hover:underline"

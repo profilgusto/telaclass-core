@@ -3,6 +3,9 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { Menu } from 'lucide-react';
+import { useMediaQuery } from '@/lib/use-media-query';
+import { MobileSidebar } from '@/components/mobile-sidebar';
 
 export function Header() {
     const pathname = usePathname();
@@ -39,8 +42,26 @@ export function Header() {
           ))}
         </nav>
 
-        {/* “hamburger” para mobile – opcional, fica vazio por enquanto */}
-        <div className="md:hidden ml-auto" />
+        {/* “hamburger” para mobile */}
+        {!open && (
+          <button onClick={() => setOpen(true)} className="md:hidden p-2">
+            <Menu className="h-5 w-5" />
+          </button>
+        )}
+
+        <MobileSidebar />
+        
+
+        {/* Botão sanduiche do menu lateral */}
+        {!isOpen && (
+          <button 
+            onClick={() => setOpen(true)}
+            className='md:hidden p-2 rounded hover:bg-gray-100'
+            aria-label='Abrir menu'
+          >
+            <Menu className='h-5 w-5' />
+          </button>
+        )}
 
         {/* Theme toggle */}
         <ThemeToggle />
