@@ -8,6 +8,6 @@ services:
     volumes:
       - .:/app # Código host → contêiner (hot-reload)
       - /app/node_modules # Mantém node_modules só dentro do contêiner
-      - "/Users/filgusto/pcloud-sync/telaclass-content:/app/content:ro"  # Conteúdo montado externamente
+      - "/Users/filgusto/pcloud-sync/telaclass-content:/app/content/disciplinas:ro"  # Conteúdo montado externamente
     ports:
       - "3000:3000"

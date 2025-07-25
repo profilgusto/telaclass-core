@@ -63,7 +63,14 @@ export function Header() {
         <ThemeToggle />
 
         {/* Drawer mobile */}
-        <MobileSidebar open={open} setOpen={setOpen} />
+        <MobileSidebar open={open} setOpen={setOpen} >
+          <nav className='p-4 space-x-4 text-sm'>
+            <Link href='/' onClick={() => setOpen(false)}>Início</Link>
+            <Link href='/disciplinas' onClick={() => setOpen(false)}>Disciplinas</Link>
+            <Link href='/sobre' onClick={() => setOpen(false)}>Sobre</Link>
+          </nav>
+        </MobileSidebar>
+
       </div>
     </header>
   );

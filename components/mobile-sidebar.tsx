@@ -1,13 +1,15 @@
 'use client';
-import { Drawer, DrawerContent } from '@/components/ui/drawer';
-import { SidebarPlaceholder } from './sidebar-placeholder';
+import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer';
+import type { ReactNode } from 'react';
 
 export function MobileSidebar({
   open,
   setOpen,
+  children,
 }: {
   open: boolean;
   setOpen: (v: boolean) => void;
+  children: ReactNode;
 }) {
   return (
     <Drawer
@@ -17,7 +19,8 @@ export function MobileSidebar({
       modal
     >
       <DrawerContent className="p-0 w-60">
-        <SidebarPlaceholder />
+        <DrawerTitle className="sr-only">Menu de navegação</DrawerTitle>
+          {children}
       </DrawerContent>
     </Drawer>
   );

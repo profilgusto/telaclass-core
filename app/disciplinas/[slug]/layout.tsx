@@ -1,22 +1,30 @@
 import type { ReactNode } from 'react';
-import { SidebarPlaceholder } from '@/components/sidebar-placeholder';
+import { getCourse } from '@/lib/content';
+import { CourseSidebar } from '@/components/course-sidebar';
 
-export default function DisciplinaLayout({children}: {children: ReactNode;}) {
-    return (
-        <div className="flex min-h-screen">
-            {/* Sidebar (66 % largura no mobile ocultaremos via Drawer) */}
-            <aside
-                className="hidden md:block w-60 shrink-0 border-r
+export default async function DisciplinaLayout({
+  children,
+  params,
+}: {
+  children: ReactNode;
+  params: { slug: string };
+}) {
+  const course = await getCourse(params.slug);
+  return (
+    <div className="flex min-h-screen">
+      {/* Sidebar (66 % largura no mobile ocultaremos via Drawer) */}
+      <aside
+        className="hidden md:block w-60 shrink-0 border-r
                         border-border bg-[var(--sidebar)]
                         text-[var(--sidebar-foreground)]"
-            >
-                <SidebarPlaceholder />
-            </aside>
+      >
+        <CourseSidebar course={course} />
+      </aside>
 
-            {/* Conteúdo principal */}
-            <main className="flex-1 px-[var(--space-lg)] py-[var(--space-md)]">
-                {children}
-            </main>
-        </div>
-    );
-};
+      {/* Conteúdo principal */}
+      <main className="flex-1 px-[var(--space-lg)] py-[var(--space-md)]">
+        {children}
+      </main>
+    </div>
+  );
+}
