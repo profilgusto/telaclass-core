@@ -52,28 +52,15 @@ export async function getCourse(slug: string): Promise<Course> {
 export async function getModule(
   courseSlug: string,
   entryPath: string
-): Promise<{ texto?: string; slides?: string }> {
+): Promise<{ texto?: any; slides?: any }> {
   const dir = path.join(base, courseSlug, entryPath);
   const files: string[] = (await fs.readdir(dir).catch(() => [])) as string[];
 
-  const out: { texto?: string; slides?: string } = {};
+  const out: { texto?: any; slides?: any } = {};
 
-  /** Helper para compilar e extrair a string do MDX */
-  const compileSource = async (filePath: string): Promise<string> => {
+  const compileSource = async (filePath: string): Promise<any> => {
     const mdx = await fs.readFile(filePath, 'utf8');
-    // O resultado do compileMDX muda entre versões:
-    // - v4: { code: string }
-    // - v5: { compiledSource: string }
-    // - future: { content: string }
-    // Usamos fallback encadeado para cobrir todas.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const compiled: any = await compileMDX({ source: mdx });
-    return (
-      compiled?.compiledSource ??
-      compiled?.content ??
-      compiled?.code ??
-      ''
-    );
+    return await compileMDX({ source: mdx });
   };
 
   if (files.includes('texto.mdx')) {

@@ -1,6 +1,7 @@
 import { getCourse, getModule } from '@/lib/content';
 import type { CourseEntry } from '@/lib/content';
 import { notFound } from 'next/navigation';
+import { MDXRemote } from 'next-mdx-remote/rsc';
 
 export default async function ModulePage({
   params,
@@ -9,29 +10,27 @@ export default async function ModulePage({
   params: Promise<{ slug: string; mod: string }>;
   searchParams?: Record<string, string | string[]>;
 }) {
-    void searchParams; // keep unused var from lint warning
     const { slug, mod } = await params;
+    const clean = (s: string) => s.replace(/^\/+/, '');
     const course = await getCourse(slug);
-    const entry = course.entries.find((e) => e.path === mod);
+    const entry = course.entries.find((e) => clean(e.path) === clean(mod));
 
     if (!entry || entry.visible === false) notFound();
 
-    const content = await getModule(slug, entry.path);
+    const content = await getModule(slug, clean(entry.path));
 
     return(
         <>
-            { content.texto && (
-                <article 
-                    className="prose dark:prose-invert"
-                    dangerouslySetInnerHTML={{__html: content.texto }}
-                />
+            {content.texto && (
+              <article className="prose dark:prose-invert">
+                <MDXRemote {...content.texto} />
+              </article>
             )}
 
-            { content.slides && (
-                <section className="mt-[var(--space-lg)]">
-                    {/* Placeholder - O Slidesrenderer será criado depois */}
-                    <div dangerouslySetInnerHTML={{ __html: content.slides }} />
-                </section>
+            {content.slides && (
+              <section className="mt-[var(--space-lg)]">
+                <MDXRemote {...content.slides} />
+              </section>
             )}
         </>
     );
