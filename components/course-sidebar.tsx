@@ -2,10 +2,17 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
+
 import type { Course } from '@/lib/content';
 import type { CourseEntry } from '@/lib/content';
 
-export function CourseSidebar({ course }: { course: Course }) {
+export function CourseSidebar({ 
+    course, 
+    slug, 
+}: { 
+    course: Course; 
+    slug: string; 
+}) {
     const pathname = usePathname();
     const normalize = (s: string) => s.replace(/^\/+|\/+$/g, '');
 
@@ -15,7 +22,7 @@ export function CourseSidebar({ course }: { course: Course }) {
                 .filter((e) => e.visible !== false)
                 .map((e: CourseEntry) => {
                     const slugPath = normalize(e.path as string);
-                    const href = `/disciplinas/${course.code}/${slugPath}`;
+                    const href = `/disciplinas/${slug}/${slugPath}`;
                     const active = normalize(pathname) === normalize(href);
 
                     return (

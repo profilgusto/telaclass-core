@@ -7,9 +7,10 @@ export default async function DisciplinaLayout({
   params,
 }: {
   children: ReactNode;
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const course = await getCourse(params.slug);
+  const { slug } = await params;
+  const course = await getCourse(slug);
   return (
     <div className="flex min-h-screen">
       {/* Sidebar (66 % largura no mobile ocultaremos via Drawer) */}
@@ -18,7 +19,7 @@ export default async function DisciplinaLayout({
                         border-border bg-[var(--sidebar)]
                         text-[var(--sidebar-foreground)]"
       >
-        <CourseSidebar course={course} />
+        <CourseSidebar course={course} slug={slug} />
       </aside>
 
       {/* Conteúdo principal */}

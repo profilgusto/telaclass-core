@@ -2,16 +2,21 @@ import { getCourse, getModule } from '@/lib/content';
 import type { CourseEntry } from '@/lib/content';
 import { notFound } from 'next/navigation';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default async function ModulePage({ params, searchParams }: any) {
+export default async function ModulePage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string; mod: string }>;
+  searchParams?: Record<string, string | string[]>;
+}) {
     void searchParams; // keep unused var from lint warning
-
-    const course = await getCourse(params.slug);
-    const entry = course.entries.find((e) => e.path === params.mod);
+    const { slug, mod } = await params;
+    const course = await getCourse(slug);
+    const entry = course.entries.find((e) => e.path === mod);
 
     if (!entry || entry.visible === false) notFound();
 
-    const content = await getModule(params.slug, entry.path);
+    const content = await getModule(slug, entry.path);
 
     return(
         <>
