@@ -2,7 +2,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { compileMDX } from 'next-mdx-remote/rsc'
 
-const base = path.join(process.cwd(), 'content');
+const base = path.join(process.cwd(), 'content/disciplinas');
 
 /** Tipos utilitarios */
 export type CourseEntry = {

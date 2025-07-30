@@ -7,8 +7,8 @@ import { Footer } from "@/components/footer";
 
 const geistSans = localFont({
   src: [
-    { path: "../public/fonts/Geist-Regular.woff2", weight: "400", style: "normal", format: "woff2" },
-    { path: "../public/fonts/Geist-Medium.woff2",  weight: "500", style: "normal", format: "woff2" },
+    { path: "../public/fonts/Geist-Regular.woff2", weight: "400", style: "normal"},
+    { path: "../public/fonts/Geist-Medium.woff2",  weight: "500", style: "normal"},
   ],
   variable: "--font-geist-sans",
   display: "swap",
@@ -16,7 +16,7 @@ const geistSans = localFont({
 
 const geistMono = localFont({
   src: [
-    { path: "../public/fonts/GeistMono-Regular.woff2", weight: "400", style: "normal", format: "woff2" },
+    { path: "../public/fonts/GeistMono-Regular.woff2", weight: "400", style: "normal"},
   ],
   variable: "--font-geist-mono",
   display: "swap",
