@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { compileMDX } from 'next-mdx-remote/rsc'
+import { serialize } from 'next-mdx-remote/serialize'
 
 const base = path.join(process.cwd(), 'content/disciplinas');
 
@@ -60,7 +60,7 @@ export async function getModule(
 
   const compileSource = async (filePath: string): Promise<any> => {
     const mdx = await fs.readFile(filePath, 'utf8');
-    return await compileMDX({ source: mdx });
+    return await serialize(mdx);
   };
 
   if (files.includes('texto.mdx')) {

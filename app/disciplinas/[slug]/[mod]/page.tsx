@@ -7,7 +7,7 @@ export default async function ModulePage({
   params,
   searchParams,
 }: {
-  params: Promise<{ slug: string; mod: string }>;
+  params: Promise< { slug: string; mod: string } >;
   searchParams?: Record<string, string | string[]>;
 }) {
     const { slug, mod } = await params;
@@ -21,17 +21,22 @@ export default async function ModulePage({
 
     return(
         <>
+            <p>CHECKPOINT 1</p>
+
             {content.texto && (
               <article className="prose dark:prose-invert">
-                <MDXRemote {...content.texto} />
+                <p> CHECKPOINT 2</p>
+                <MDXRemote source={content.texto} components={{}} />
               </article>
             )}
 
-            {content.slides && (
+            
+            {/* COMENTEI O RENDERIZADOR DE SLIDES POR ENQUANTO
+             content.slides && (
               <section className="mt-[var(--space-lg)]">
-                <MDXRemote {...content.slides} />
+                <MDXRemote source={content.slides} />
               </section>
-            )}
+            ) */}
         </>
     );
 }
