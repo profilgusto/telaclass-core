@@ -2,6 +2,7 @@ import { getCourse, getModule } from '@/lib/content';
 import type { CourseEntry } from '@/lib/content';
 import { notFound } from 'next/navigation';
 import { MDXRemote } from 'next-mdx-remote/rsc';
+import rehypeRelativeImages from '@/lib/mdx/rehype-relative-images'
 
 export default async function ModulePage({
   params,
@@ -28,7 +29,9 @@ export default async function ModulePage({
                             options={{                             // pode deixar plug-ins prontos
                             mdxOptions: {
                               remarkPlugins: [],
-                              rehypePlugins: [],
+                              rehypePlugins: [
+                                [rehypeRelativeImages, { slug, mod, base: '/assets', implicitImgDir: true }], // para remapear o caminho de imagens relativas ao arquivo .mdx
+                              ],
                             },
                           }}
                 />
