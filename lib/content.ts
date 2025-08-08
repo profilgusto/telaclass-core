@@ -1,6 +1,5 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { serialize } from 'next-mdx-remote/serialize'
 
 const base = path.join(process.cwd(), 'content/disciplinas');
 
@@ -48,27 +47,26 @@ export async function getCourse(slug: string): Promise<Course> {
     return { ...data, entries};
 };
 
-/** Carrega texto.mdx e/ou slides.mdx de uma entrada **/
+/** Carrega texto.mdx e/ou slides.mdx de uma entrada (RSC-friendly: retorna string crua) **/
 export async function getModule(
   courseSlug: string,
   entryPath: string
-): Promise<{ texto?: any; slides?: any }> {
+): Promise<{ texto?: string; slides?: string }> {
+  
   const dir = path.join(base, courseSlug, entryPath);
   const files: string[] = (await fs.readdir(dir).catch(() => [])) as string[];
 
-  const out: { texto?: any; slides?: any } = {};
+  const out: { texto?: string; slides?: string } = {};
 
-  const compileSource = async (filePath: string): Promise<any> => {
-    const mdx = await fs.readFile(filePath, 'utf8');
-    return await serialize(mdx);
-  };
+  const read = async (file: string) =>
+    fs.readFile(path.join(dir, file), 'utf8');
 
   if (files.includes('texto.mdx')) {
-    out.texto = await compileSource(path.join(dir, 'texto.mdx'));
+    out.texto = await read('texto.mdx');
   }
 
   if (files.includes('slides.mdx')) {
-    out.slides = await compileSource(path.join(dir, 'slides.mdx'));
+    out.slides = await read('slides.mdx');
   }
 
   return out;

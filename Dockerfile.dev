@@ -1,11 +1,14 @@
 FROM node:20-alpine
 WORKDIR /app
 
-# Instala dependências primeiro (cache)
-COPY package*.json ./
-RUN npm ci
+# Copia apenas o package.json para gerar o lock no container
+COPY package.json ./
 
-# Copia todo o código, incluindo o submódulo
+# Gera lockfile e instala de forma determinística
+RUN npm install --package-lock-only --no-audit --no-fund
+RUN npm ci --no-audit --no-fund
+
+# Agora copia o resto do código
 COPY . .
 
 CMD ["npm", "run", "dev", "-L"]

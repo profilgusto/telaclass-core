@@ -26,7 +26,15 @@ export default async function ModulePage({
             {content.texto && (
               <article className="prose dark:prose-invert">
                 <p> CHECKPOINT 2</p>
-                <MDXRemote source={content.texto} components={{}} />
+                <MDXRemote  source={content.texto} 
+                            components={{}} 
+                            options={{                             // pode deixar plug-ins prontos
+                            mdxOptions: {
+                              remarkPlugins: [],
+                              rehypePlugins: [],
+                            },
+                          }}
+                />
               </article>
             )}
 
