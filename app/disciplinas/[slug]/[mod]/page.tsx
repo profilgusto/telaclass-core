@@ -21,11 +21,8 @@ export default async function ModulePage({
 
     return(
         <>
-            <p>CHECKPOINT 1</p>
-
             {content.texto && (
               <article className="prose dark:prose-invert">
-                <p> CHECKPOINT 2</p>
                 <MDXRemote  source={content.texto} 
                             components={{}} 
                             options={{                             // pode deixar plug-ins prontos
