@@ -6,6 +6,9 @@ services:
     environment:
       NODE_ENV: development
       NODE_OPTIONS: "--inspect=0.0.0.0:9229"
+      CHOKIDAR_USEPOLLING: true
+      WATCHPACK_POLLING: true
+      WATCHPACK_POLLING_INTERVAL: 1000
       # Se notar que o hot reload não detecta mudanças em mounts externos, descomente:
       # WATCHPACK_POLLING: "true"
       # CHOKIDAR_USEPOLLING: "true"
@@ -19,7 +22,7 @@ services:
       - "9229:9229"
       - "9230:9230"
     command: >
-      node ./node_modules/.bin/next dev -H 0.0.0.0
+      sh -lc "NODE_OPTIONS= npm run gen:mdx-manifest || true; node ./node_modules/.bin/next dev -H 0.0.0.0"
 
 volumes:
   node_modules:
