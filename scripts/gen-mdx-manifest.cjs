@@ -6,7 +6,7 @@ const { resolve, sep } = require('node:path');
 const ROOT = resolve(process.cwd(), 'content/disciplinas');
 
 (async () => {
-  const files = await fg(['**/texto.mdx', '**/slides.mdx'], { cwd: ROOT });
+  const files = await fg(['**/texto.mdx', '**/slide.mdx', '!**/_bak/**'], { cwd: ROOT });
 
   const entries = files.map((rel) => {
     const key = '/' + rel.split(sep).join('/');
