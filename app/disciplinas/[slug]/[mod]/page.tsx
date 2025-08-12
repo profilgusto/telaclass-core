@@ -20,9 +20,8 @@ export default async function ModulePage({
 
   // valida se slug/mod existem no _course.json
   const course = await getCourse(cleanSlug);
-  const clean = (s: string) => norm(s);
   const entry = course.entries.find(
-    (e) => clean(e.path) === clean(cleanMod) && e.type === 'module'
+    (e) => norm(e.path) === cleanMod && e.type === 'module'
   );
   if (!entry) {
     console.warn('[MDX PAGE] module not found in _course.json:', {
@@ -65,12 +64,33 @@ export default async function ModulePage({
   }
 
   // importa e renderiza o MDX (compilado pelo plugin)
-  const modImport = await MDX_MANIFEST[key]();
-  const MDX = modImport.default;
+  const { default: MDX } = await MDX_MANIFEST[key]();
+
+  // Transforma src relativo em /disciplinas/{slug}/{mod}/file/...
+  const Img = (
+    { src, alt, ...rest }: { src?: string; alt?: string } & Record<string, any>
+  ) => {
+    const s = typeof src === 'string' ? src : '';
+    const isAbsolute = /^([a-z]+:)?\/\//i.test(s) || s.startsWith('/');
+
+    // se for só o nome (sem barra), assume subpasta "img/"
+    const normalized = !isAbsolute
+      ? `${s.includes('/') ? s : `img/${s}`}`.replace(/^\.?\/*/, '')
+      : s;
+
+    // encode seguro de cada segmento
+    const encoded = normalized.split('/').map(encodeURIComponent).join('/');
+
+    const url = isAbsolute
+      ? s
+      : `/disciplinas/${encodeURIComponent(cleanSlug)}/${encodeURIComponent(cleanMod)}/file/${encoded}`;
+
+    return <img src={url} alt={alt ?? ''} {...rest} />;
+  };
 
   return (
     <div className="prose max-w-none">
-      <MDX />
+      <MDX components={{ img: Img }} />
     </div>
   );
 }
