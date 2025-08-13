@@ -2,6 +2,7 @@
 import { notFound } from 'next/navigation';
 import { getCourse } from '@/lib/content'; // mantém sua lógica de ler _course.json
 import { MDX_MANIFEST } from '@/content/mdx-manifest';
+import Link from 'next/link';
 
 export default async function ModulePage({
   params,
@@ -16,7 +17,7 @@ export default async function ModulePage({
   const cleanSlug = norm(slug);
   const cleanMod = norm(mod);
 
-  console.log('[MDX PAGE] params:', { slug: cleanSlug, mod: cleanMod });
+  //console.log('[MDX PAGE] params:', { slug: cleanSlug, mod: cleanMod });
 
   // valida se slug/mod existem no _course.json
   const course = await getCourse(cleanSlug);
@@ -47,8 +48,8 @@ export default async function ModulePage({
   ];
 
   const manifestKeys = Object.keys(MDX_MANIFEST);
-  console.log('[MDX PAGE] candidates:', candidates);
-  console.log('[MDX PAGE] manifest entries:', manifestKeys.length);
+  //console.log('[MDX PAGE] candidates:', candidates);
+  //console.log('[MDX PAGE] manifest entries:', manifestKeys.length);
 
   // acha o 1º que existe no manifesto
   const key = candidates.find((k) => k in MDX_MANIFEST);
@@ -83,14 +84,47 @@ export default async function ModulePage({
 
     const url = isAbsolute
       ? s
-      : `/disciplinas/${encodeURIComponent(cleanSlug)}/${encodeURIComponent(cleanMod)}/file/${encoded}`;
+      : `/disciplinas/${encodeURIComponent(cleanSlug)}/${encodeURIComponent(cleanMod)}/${encoded}`;
 
     return <img src={url} alt={alt ?? ''} {...rest} />;
   };
 
+  // Reescreve href relativo para /disciplinas/{slug}/{mod}/{...}
+  const A = (
+    { href, children, ...rest }: { href?: string } & Record<string, any>
+  ) => {
+    const h = typeof href === 'string' ? href : '';
+    // Absoluto (http/https) ou root-absolute (começa com /) → não mexe
+    const isAbsolute = /^([a-z]+:)?\/\//i.test(h) || h.startsWith('/');
+    if (isAbsolute) {
+      const external = /^https?:\/\//i.test(h);
+      if (external) {
+        return (
+          <a href={h} target="_blank" rel="noopener" style={{ textDecoration: 'underline' }} {...rest}>
+            {children}
+          </a>
+        );
+      }
+      return (
+        <Link href={h} style={{ textDecoration: 'underline' }} {...(rest as any)}>
+          {children}
+        </Link>
+      );
+    }
+    // Relativo (não começa com /): remove ./ inicial e codifica segmentos
+    const normalized = h.replace(/^\.\/+/, '');
+    const encoded = normalized.split('/').map(encodeURIComponent).join('/');
+    const url = `/disciplinas/${encodeURIComponent(cleanSlug)}/${encodeURIComponent(cleanMod)}/${encoded}`;
+    return (
+      <Link href={url} style={{ textDecoration: 'underline' }} {...(rest as any)}>
+        {children}
+      </Link>
+    );
+  };
+
   return (
     <div className="prose max-w-none">
-      <MDX components={{ img: Img }} />
+      <MDX components={{ img: Img, a: A }} />
     </div>
   );
 }

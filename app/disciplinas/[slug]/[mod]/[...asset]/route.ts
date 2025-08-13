@@ -1,5 +1,4 @@
-// app/disciplinas/[slug]/[mod]/file/[...asset]/route.ts
-// Serve arquivos locais do módulo com cache, ETag e suporte a Range (vídeo/áudio/PDF).
+// app/disciplinas/[slug]/[mod]/[...asset]/route.ts
 export const runtime = 'nodejs';
 
 import { NextResponse } from 'next/server';
@@ -10,6 +9,7 @@ import path from 'node:path';
 function baseDir() {
   return path.join(process.cwd(), 'content', 'disciplinas');
 }
+
 function mimeOf(filePath: string) {
   const ext = path.extname(filePath).toLowerCase();
   switch (ext) {
@@ -33,6 +33,7 @@ function mimeOf(filePath: string) {
     default: return 'application/octet-stream';
   }
 }
+
 const isImage = (m: string) => m.startsWith('image/');
 const etag = (st: { size: number; mtimeMs: number }) =>
   `W/"${st.size.toString(16)}-${Math.floor(st.mtimeMs).toString(16)}"`;
@@ -46,7 +47,7 @@ async function resolveSafe(slug: string, mod: string, parts: string[]) {
   const target = path.join(root, slug, mod, ...parts);
   const resolved = path.resolve(target);
   const allowed = path.resolve(path.join(root, slug, mod));
-  return resolved.startsWith(allowed) ? resolved : null; // bloqueia path traversal
+  return resolved.startsWith(allowed) ? resolved : null;
 }
 
 function toWebStream(nodeStream: fs.ReadStream) {
@@ -99,7 +100,7 @@ export async function GET(
     const lastMod = new Date(st.mtimeMs).toUTCString();
     const prod = process.env.NODE_ENV === 'production';
 
-    // Condicional (304)
+    // 304
     const inm = req.headers.get('if-none-match');
     const ims = req.headers.get('if-modified-since');
     if ((inm && inm === tag) || (ims && new Date(ims) >= new Date(lastMod))) {
@@ -111,7 +112,7 @@ export async function GET(
       return new NextResponse(null, { status: 304, headers: h });
     }
 
-    // Suporte a Range (vídeos/áudio/pdf)
+    // Range (vídeo/áudio/pdf)
     const range = req.headers.get('range');
     if (range) {
       const match = /bytes=(\d*)-(\d*)/.exec(range);
@@ -136,7 +137,7 @@ export async function GET(
       return new NextResponse('Range Not Satisfiable', { status: 416, headers: h });
     }
 
-    // Resposta completa (stream para arquivos grandes)
+    // Conteúdo completo
     if (st.size < 5 * 1024 * 1024) {
       const buf = await fsp.readFile(filePath);
       const h = new Headers({
