@@ -3,27 +3,36 @@ import * as React from 'react';
 import Link from 'next/link';
 import type { ComponentPropsWithoutRef } from 'react';
 import type { MDXComponents } from 'mdx/types';
+import CodeBlock from '@/components/code-block';
 
 // Helper: external link?
 const isExternal = (href?: string) =>
   !!href && /^(https?:)?\/\//i.test(href) && !href.startsWith(process.env.NEXT_PUBLIC_SITE_URL ?? '__not_set__');
 
-// Inline vs block code rendering
-function Code(props: ComponentPropsWithoutRef<'code'>) {
+// Inline code only (blocks are handled by <Pre/> with <CodeBlock/>)
+function InlineCode(props: ComponentPropsWithoutRef<'code'>) {
   const className = props.className ?? '';
-  const isBlock = /language-/.test(className);
-  if (isBlock) {
-    return (
-      <code
-        {...props}
-        className={['block rounded-md p-4 text-sm overflow-x-auto', className].join(' ').trim()}
-      />
-    );
-  }
+  // if a language- class sneaks into inline, just render as-is
+  if (/language-/.test(className)) return <code {...props} />;
   return <code {...props} className={['px-1 py-0.5 rounded', className].join(' ').trim()} />;
 }
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
+  // Blocks with ```lang → render as CodeBlock with copy + highlight
+  const Pre = (p: any) => {
+    const child = p?.children?.props; // expected to be the <code> element
+    const className: string = child?.className ?? '';
+    const isBlock = /language-/.test(className);
+    if (isBlock && typeof child?.children === 'string') {
+      return <CodeBlock code={child.children} className={className} />;
+    }
+    // Fallback for non-standard structures
+    return (
+      <pre className={['rounded-md p-4 my-4 overflow-x-auto', p.className ?? ''].join(' ').trim()}>
+        {p.children}
+      </pre>
+    );
+  };
   return {
     // Headings
     h1: (p) => <h1 className="text-3xl font-bold mt-8 mb-4" {...p} />,
@@ -59,13 +68,8 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     },
 
     // Code & pre
-    code: Code,
-    pre: (p) => (
-      <pre
-        className={['rounded-md p-0 my-4 overflow-x-auto', p.className ?? ''].join(' ').trim()}
-        {...p}
-      />
-    ),
+    code: InlineCode,
+    pre: Pre,
 
     // Tables
     table: (p) => (
