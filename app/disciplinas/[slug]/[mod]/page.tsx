@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getCourse } from '@/lib/content'; // mantém sua lógica de ler _course.json
 import { MDX_MANIFEST } from '@/content/mdx-manifest';
 import Link from 'next/link';
+import MdxRenderer from '@/components/presentation/MdxRenderer';
 
 export default async function ModulePage({
   params,
@@ -33,13 +34,8 @@ export default async function ModulePage({
     notFound();
   }
 
-  // decide qual arquivo abrir
-  const view =
-    (Array.isArray(searchParams?.view)
-      ? searchParams?.view[0]
-      : searchParams?.view) ?? 'texto';
-
-  const preferred = view === 'slides' ? ['slides.mdx', 'texto.mdx'] : ['texto.mdx', 'slides.mdx'];
+  // decide qual arquivo abrir (apenas um MDX por módulo)
+  const preferred = ['texto.mdx'];
   const fallbacks = ['index.mdx', 'README.mdx'];
 
   const candidates = [
@@ -123,9 +119,11 @@ export default async function ModulePage({
   };
 
   return (
-    <div className="prose max-w-none">
-      <MDX components={{ img: Img, a: A }} />
-    </div>
+    <MdxRenderer
+      manifestKey={key}
+      slug={cleanSlug}
+      mod={cleanMod}
+    />
   );
 }
 

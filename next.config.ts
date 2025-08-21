@@ -5,12 +5,19 @@ import type { NextConfig } from 'next';
 // Plugins para matemática em MDX
 import remarkMath from 'remark-math';
 import rehypeMathjax from 'rehype-mathjax'; // alias para a variante SVG
+import remarkDirective from 'remark-directive'
+import rehypeSlug from 'rehype-slug'
+
+import remarkDirectiveToMdx from '@/mdx-plugins/remark-directive-to-mdx';
+import rehypeWrapH2Sections from '@/mdx-plugins/rehype-wrap-h2-sections';
+
+
 
 const withMDX = createMDX({
   extension: /\.mdx?$/,
   options: {
     // Habilita $...$ (inline) e $$...$$ (display)
-    remarkPlugins: [remarkMath],
+    remarkPlugins: [remarkMath, remarkDirective, remarkDirectiveToMdx],
     // Renderiza com MathJax no build (SSR) e numerações automáticas
     rehypePlugins: [
       [
@@ -27,6 +34,8 @@ const withMDX = createMDX({
           // Para SVG você normalmente não precisa configurar nada aqui.
           // Se preferir CommonHTML (CHTML), use a alternativa no bloco abaixo.
         },
+        rehypeSlug,
+        rehypeWrapH2Sections,
       ],
     ],
   },

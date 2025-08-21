@@ -166,3 +166,14 @@ mjx-container:not([display="true"]) {
   display: inline-block !important;
   margin: 0 .2em;
 }
+
+
+@media print {
+  /* cada Slide vira página */
+  Slide, slide, section[data-id] {
+    break-after: page;
+    page-break-after: always;
+  }
+  /* opcional: esconder header ao imprimir */
+  .print-hide { display: none !important; }
+}

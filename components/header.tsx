@@ -6,6 +6,8 @@ import { usePathname } from 'next/navigation';
 import { Menu } from 'lucide-react';
 
 import { ThemeToggle } from '@/components/theme-toggle';
+import ViewToggle from '@/components/presentation/ViewToggle';
+
 import { MobileSidebar } from '@/components/mobile-sidebar';
 
 export function Header() {
@@ -58,6 +60,9 @@ export function Header() {
         >
           <Menu className="h-5 w-5" />
         </button>
+
+        {/* Content Presentation view toggle */}
+        <ViewToggle />
 
         {/* Theme toggle */}
         <ThemeToggle />
