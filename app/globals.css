@@ -144,3 +144,25 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+/* Bloco (display math) */
+mjx-container[display="true"] {
+  display: block !important;
+  text-align: center;
+  margin: 1rem 0;
+}
+
+/* Inline */
+mjx-container:not([display="true"]) {
+  display: inline-block !important;
+  vertical-align: middle;
+  margin: 0 .2em;
+  line-height: 1;
+}
+
+/* Se usa Tailwind Typography */
+.prose mjx-container:not([display="true"]) {
+  display: inline-block !important;
+  margin: 0 .2em;
+}
