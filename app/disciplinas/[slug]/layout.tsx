@@ -1,6 +1,4 @@
 import type { ReactNode } from 'react';
-import { getCourse } from '@/lib/content';
-import { CourseSidebar } from '@/components/course-sidebar';
 
 export default async function DisciplinaLayout({
   children,
@@ -9,23 +7,10 @@ export default async function DisciplinaLayout({
   children: ReactNode;
   params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await params;
-  const course = await getCourse(slug);
+  await params;
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar (66 % largura no mobile ocultaremos via Drawer) */}
-      <aside
-        className="hidden md:block w-60 shrink-0 border-r
-                        border-border bg-[var(--sidebar)]
-                        text-[var(--sidebar-foreground)]"
-      >
-        <CourseSidebar course={course} slug={slug} />
-      </aside>
-
-      {/* Conteúdo principal */}
-      <main className="flex-1 px-[var(--space-lg)] py-[var(--space-md)]">
-        {children}
-      </main>
+    <div className="min-h-screen">
+      {children}
     </div>
   );
 }

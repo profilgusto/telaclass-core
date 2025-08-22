@@ -4,6 +4,7 @@ import { getCourse } from '@/lib/content'; // mantém sua lógica de ler _course
 import { MDX_MANIFEST } from '@/content/mdx-manifest';
 import Link from 'next/link';
 import MdxRenderer from '@/components/presentation/MdxRenderer';
+import { CourseSidebar } from '@/components/course-sidebar';
 
 export default async function ModulePage({
   params,
@@ -119,11 +120,18 @@ export default async function ModulePage({
   };
 
   return (
-    <MdxRenderer
-      manifestKey={key}
-      slug={cleanSlug}
-      mod={cleanMod}
-    />
+    <div className="flex min-h-screen">
+      <aside className="hidden md:block w-60 shrink-0 border-r border-border bg-[var(--sidebar)] text-[var(--sidebar-foreground)]">
+        <CourseSidebar course={course} slug={cleanSlug} />
+      </aside>
+      <main className="flex-1 px-[var(--space-lg)] py-[var(--space-md)]">
+        <MdxRenderer
+          manifestKey={key}
+          slug={cleanSlug}
+          mod={cleanMod}
+        />
+      </main>
+    </div>
   );
 }
 

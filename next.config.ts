@@ -11,8 +11,6 @@ import rehypeSlug from 'rehype-slug'
 import remarkDirectiveToMdx from '@/mdx-plugins/remark-directive-to-mdx';
 import rehypeWrapH2Sections from '@/mdx-plugins/rehype-wrap-h2-sections';
 
-
-
 const withMDX = createMDX({
   extension: /\.mdx?$/,
   options: {
