@@ -75,13 +75,31 @@ export default function SlideDeck({ children }: { children: React.ReactNode }) {
 
       // embrulhar ranges em sections (movendo os nós DOM)
       const newSections: HTMLElement[] = []
-      built.forEach((r) => {
+      built.forEach((r, idx) => {
         const sec = document.createElement('section')
         sec.dataset.id = r.id
         sec.className = 'rounded-2xl px-6 py-8 mx-auto my-8 max-w-4xl'
         for (let i = r.start; i <= r.end; i++) {
           if (kids[i]?.parentElement === prose) {
             sec.appendChild(kids[i])
+          }
+        }
+        // Estilização especial para o primeiro slide (intro com H1)
+        if (idx === 0) {
+          const h1 = sec.querySelector('h1') as HTMLElement | null
+          if (h1) {
+            // classes grandes e centralizadas
+            h1.classList.add('text-5xl','sm:text-6xl','font-bold','text-center','mb-6')
+            // agrupar restante como subtítulo centralizado
+            const rest = Array.from(sec.childNodes).filter(n => n !== h1)
+            if (rest.length) {
+              const wrapper = document.createElement('div')
+              wrapper.className = 'mt-2 text-xl text-center leading-relaxed space-y-4 max-w-3xl'
+              rest.forEach(n => wrapper.appendChild(n))
+              sec.appendChild(wrapper)
+            }
+            // centralizar layout verticalmente (opcional altura mínima)
+            sec.classList.add('intro-slide','flex','flex-col','items-center','justify-center','min-h-[60vh]','text-center')
           }
         }
         prose.insertBefore(sec, prose.children[r.start] || null)
