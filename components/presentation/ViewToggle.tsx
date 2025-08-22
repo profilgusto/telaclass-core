@@ -2,6 +2,8 @@
 
 import { useViewMode, setViewMode } from '@/components/presentation/useViewMode'
 
+import { NotebookText, Presentation } from 'lucide-react';
+
 export default function ViewToggle() {
   const mode = useViewMode()
   const next = mode === 'apresentacao' ? 'texto' : 'apresentacao'
@@ -19,7 +21,7 @@ export default function ViewToggle() {
       title={mode === 'apresentacao' ? 'Voltar ao modo texto' : 'Entrar no modo apresentação'}
     >
       <span className="hidden sm:inline">
-        {mode === 'apresentacao' ? 'Modo texto' : 'Modo apresentação'}
+        {mode === 'apresentacao' ? <NotebookText className="h-4 w-4" /> : <Presentation className="h-4 w-4" />}
       </span>
       <span className="sm:hidden">
         {mode === 'apresentacao' ? 'Texto' : 'Slides'}

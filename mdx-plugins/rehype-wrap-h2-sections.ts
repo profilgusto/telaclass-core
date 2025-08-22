@@ -8,41 +8,16 @@ type Node = any
 type Parent = any
 
 const rehypeWrapH2Sections: Plugin = () => {
-  return (tree: any) => {
-    const root = tree as any
-    const children: any[] = root.children || []
-    const newChildren: any[] = []
+  return (tree: Node) => {
+    const root = tree as Parent
+    const children: Node[] = root.children || []
+    const newChildren: Node[] = []
 
-    // 1) Intro: tudo antes do primeiro h2 vira um slide próprio
-    const firstH2 = children.findIndex(
-      n => n.type === 'element' && n.tagName === 'h2'
-    )
     let i = 0
-    if (firstH2 > 0) {
-      const introNodes = children.slice(0, firstH2)
-      // gerar id: preferir h1 dentro; senão primeiro texto; fallback 'intro'
-      const h1 = introNodes.find(
-        n => n.type === 'element' && n.tagName === 'h1'
-      )
-      let id =
-        (h1?.properties?.id as string) ||
-        toString(h1 || introNodes[0] || '') ||
-        'intro'
-      id =
-        id
-          .toLowerCase()
-          .trim()
-          .replace(/\s+/g, '-')
-          .replace(/[^a-z0-9\-]/g, '') || 'intro'
-      newChildren.push(h('Slide', { 'data-id': id }, introNodes as any))
-      i = firstH2 // começar processamento dos h2 a partir daqui
-    }
-
-    // 2) Processar cada h2 em diante como antes
     while (i < children.length) {
       const node = children[i]
       if (node.type === 'element' && node.tagName === 'h2') {
-        const slideNodes: any[] = [node]
+        const slideNodes: Node[] = [node]
         i++
         while (
           i < children.length &&
@@ -51,6 +26,7 @@ const rehypeWrapH2Sections: Plugin = () => {
           slideNodes.push(children[i])
           i++
         }
+        // id já vem de rehype-slug (se houver), senão gera
         let id =
           (node.properties && (node.properties.id as string)) ||
           toString(node)
@@ -58,9 +34,13 @@ const rehypeWrapH2Sections: Plugin = () => {
             .trim()
             .replace(/\s+/g, '-')
             .replace(/[^a-z0-9\-]/g, '')
-        newChildren.push(h('Slide', { 'data-id': id }, slideNodes as any))
+        const slide = h(
+          'Slide',
+          { 'data-id': id },
+          slideNodes as unknown as any[]
+        )
+        newChildren.push(slide)
       } else {
-        // Se não for h2 (ex: não havia h2 algum), apenas empurrar
         newChildren.push(node)
         i++
       }

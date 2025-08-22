@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import { useSwipeable } from 'react-swipeable'
 import { useViewMode } from './useViewMode'
 
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+
 type Range = { start: number; end: number; id: string }
 type Cleanup = () => void
 
@@ -211,28 +213,30 @@ export default function SlideDeck({ children }: { children: React.ReactNode }) {
     <div className="relative mx-auto w-full" {...bind}>
       {/* Barra fixa de controles no topo */}
       <div
-        className="sticky top-0 z-20 w-full border-b bg-[var(--bg)]/85 backdrop-blur supports-[backdrop-filter]:bg-[var(--bg)]/70 flex items-center gap-4 px-4 h-12"
+        className="sticky top-0 z-20 w-full border-b bg-[var(--bg)]/85 backdrop-blur supports-[backdrop-filter]:bg-[var(--bg)]/70 flex items-stretch gap-3 px-3 h-6"
       >
-        <div className="flex-1 min-w-0">
-          <div className="font-semibold text-sm sm:text-base truncate" title={title}>{title}</div>
+        <div className="flex-1 min-w-0 h-full flex items-center">
+          <div className="font-semibold text-sm sm:text-base md:text-lg truncate leading-none" title={title}>{title}</div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-stretch gap-2 h-full">
           <button
-            className="rounded-lg px-3 py-1.5 border text-sm disabled:opacity-50"
+            className="flex h-full w-7 items-center justify-center rounded-md border text-[10px] sm:text-xs disabled:opacity-50 leading-none p-0"
             onClick={() => setIndex((i) => Math.max(i - 1, 0))}
             disabled={index <= 0 || ids.length === 0}
+            aria-label="Slide anterior"
           >
-            ◀︎ Anterior
+            <ArrowLeft className="h-12 w-12" />
           </button>
-          <div className="text-xs sm:text-sm font-medium opacity-70 tabular-nums w-[70px] text-center">
+          <div className="flex h-full items-center justify-center text-[10px] sm:text-xs font-medium opacity-70 tabular-nums w-14 leading-none select-none">
             {ids.length ? index + 1 : 0}/{ids.length || 0}
           </div>
           <button
-            className="rounded-lg px-3 py-1.5 border text-sm disabled:opacity-50"
+            className="flex h-full w-7 items-center justify-center rounded-md border text-[10px] sm:text-xs disabled:opacity-50 leading-none p-0"
             onClick={() => setIndex((i) => Math.min(i + 1, Math.max(0, ids.length - 1)))}
             disabled={index >= ids.length - 1 || ids.length === 0}
+            aria-label="Próximo slide"
           >
-            Próximo ▶︎
+            <ArrowRight className="h-8 w-8" />
           </button>
         </div>
       </div>
