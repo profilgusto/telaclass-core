@@ -22,6 +22,15 @@ export default function SlideDeck({ children }: { children: React.ReactNode }) {
 
   const [index, setIndex] = useState(0)
   const [ids, setIds] = useState<string[]>([])
+  const [title, setTitle] = useState('')
+
+  // capturar título (H1) inicial / sempre que children mudar
+  useEffect(() => {
+    const root = containerRef.current
+    if (!root) return
+    const h1 = root.querySelector('h1')
+    if (h1) setTitle(h1.textContent?.trim() || '')
+  }, [children])
 
   // cria/usa sections como “unidade de slide”
   useEffect(() => {
@@ -88,6 +97,7 @@ export default function SlideDeck({ children }: { children: React.ReactNode }) {
         if (idx === 0) {
           const h1 = sec.querySelector('h1') as HTMLElement | null
           if (h1) {
+            if (!title) setTitle(h1.textContent?.trim() || '')
             // classes grandes e centralizadas
             h1.classList.add('text-5xl','sm:text-6xl','font-bold','text-center','mb-6')
             // agrupar restante como subtítulo centralizado
@@ -98,7 +108,6 @@ export default function SlideDeck({ children }: { children: React.ReactNode }) {
               rest.forEach(n => wrapper.appendChild(n))
               sec.appendChild(wrapper)
             }
-            // centralizar layout verticalmente (opcional altura mínima)
             sec.classList.add('intro-slide','flex','flex-col','items-center','justify-center','min-h-[60vh]','text-center')
           }
         }
@@ -202,25 +211,30 @@ export default function SlideDeck({ children }: { children: React.ReactNode }) {
     <div className="relative mx-auto w-full" {...bind}>
       {/* Barra fixa de controles no topo */}
       <div
-        className="sticky top-0 z-20 w-full border-b bg-[var(--bg)]/85 backdrop-blur supports-[backdrop-filter]:bg-[var(--bg)]/70 flex items-center justify-between px-6 h-12"
+        className="sticky top-0 z-20 w-full border-b bg-[var(--bg)]/85 backdrop-blur supports-[backdrop-filter]:bg-[var(--bg)]/70 flex items-center gap-4 px-4 h-12"
       >
-        <button
-          className="rounded-lg px-3 py-1.5 border text-sm disabled:opacity-50"
-          onClick={() => setIndex((i) => Math.max(i - 1, 0))}
-          disabled={index <= 0 || ids.length === 0}
-        >
-          ◀︎ Anterior
-        </button>
-        <div className="text-xs sm:text-sm font-medium opacity-70 tabular-nums">
-          {ids.length ? index + 1 : 0}/{ids.length || 0}
+        <div className="flex-1 min-w-0">
+          <div className="font-semibold text-sm sm:text-base truncate" title={title}>{title}</div>
         </div>
-        <button
-          className="rounded-lg px-3 py-1.5 border text-sm disabled:opacity-50"
-          onClick={() => setIndex((i) => Math.min(i + 1, Math.max(0, ids.length - 1)))}
-          disabled={index >= ids.length - 1 || ids.length === 0}
-        >
-          Próximo ▶︎
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            className="rounded-lg px-3 py-1.5 border text-sm disabled:opacity-50"
+            onClick={() => setIndex((i) => Math.max(i - 1, 0))}
+            disabled={index <= 0 || ids.length === 0}
+          >
+            ◀︎ Anterior
+          </button>
+          <div className="text-xs sm:text-sm font-medium opacity-70 tabular-nums w-[70px] text-center">
+            {ids.length ? index + 1 : 0}/{ids.length || 0}
+          </div>
+          <button
+            className="rounded-lg px-3 py-1.5 border text-sm disabled:opacity-50"
+            onClick={() => setIndex((i) => Math.min(i + 1, Math.max(0, ids.length - 1)))}
+            disabled={index >= ids.length - 1 || ids.length === 0}
+          >
+            Próximo ▶︎
+          </button>
+        </div>
       </div>
 
       {/* Conteúdo; padding-top para não ficar escondido sob a barra (caso não role) */}
