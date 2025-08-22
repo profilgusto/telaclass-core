@@ -32,21 +32,35 @@ export default function SlideDeck({ children }: { children: React.ReactNode }) {
     const cleanups: Cleanup[] = []
 
     // 1) Se já existem <section data-id>, usamos eles (pipeline com plugin)
-    let sections = Array.from(root.querySelectorAll<HTMLElement>('section[data-id]'))
+    let sections: HTMLElement[] = Array.from(root.querySelectorAll<HTMLElement>('section[data-id]'))
     if (sections.length === 0) {
       // 2) FALLBACK: agrupar por <h2> dentro do .prose → embrulhar cada trecho em <section data-id=...>
       const prose = root.querySelector<HTMLElement>('div.prose') ?? root
       const kids = Array.from(prose.children) as HTMLElement[]
 
-      // localizar cabeçalhos H2
       const h2s = kids.map((el, i) => ({ el, i })).filter(({ el }) => el.tagName === 'H2')
       if (h2s.length === 0) {
-        // sem H2: nada para paginar
         setIds([])
         return
       }
 
       const built: Range[] = []
+
+      // INTRO: tudo antes do primeiro H2 vira primeiro slide
+      if (h2s[0].i > 0) {
+        const introStart = 0
+        const introEnd = h2s[0].i - 1
+        // tenta achar um H1 para gerar id consistente
+        const h1 = kids.slice(introStart, introEnd + 1).find(n => n.tagName === 'H1')
+        let introId = h1?.getAttribute('id') || ''
+        if (!introId) {
+          introId = slugify(h1?.textContent || 'introducao') || 'intro'
+          if (h1) h1.setAttribute('id', introId)
+        }
+        built.push({ start: introStart, end: introEnd, id: introId })
+      }
+
+      // Demais slides a partir de cada H2
       for (let j = 0; j < h2s.length; j++) {
         const start = h2s[j].i
         const end = j < h2s.length - 1 ? h2s[j + 1].i - 1 : kids.length - 1
@@ -64,9 +78,7 @@ export default function SlideDeck({ children }: { children: React.ReactNode }) {
       built.forEach((r) => {
         const sec = document.createElement('section')
         sec.dataset.id = r.id
-        // opcional: classes de slide
         sec.className = 'rounded-2xl px-6 py-8 mx-auto my-8 max-w-4xl'
-        // mover nós filhos [start..end] para dentro da section (na ordem)
         for (let i = r.start; i <= r.end; i++) {
           if (kids[i]?.parentElement === prose) {
             sec.appendChild(kids[i])
@@ -76,7 +88,6 @@ export default function SlideDeck({ children }: { children: React.ReactNode }) {
         newSections.push(sec)
       })
 
-      // cleanup: ao desmontar, “desembrulha” devolvendo os nós ao fluxo original
       cleanups.push(() => {
         newSections.forEach((sec) => {
           while (sec.firstChild) {
@@ -140,7 +151,7 @@ export default function SlideDeck({ children }: { children: React.ReactNode }) {
     if (!root) return
 
     // preferir sections[data-id] (pipeline ou fallback já criou)
-    const sections = Array.from(root.querySelectorAll<HTMLElement>('section[data-id]'))
+    const sections: HTMLElement[] = Array.from(root.querySelectorAll<HTMLElement>('section[data-id]'))
     if (sections.length === 0) return
 
     sections.forEach((el, idx) => {
