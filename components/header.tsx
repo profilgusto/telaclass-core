@@ -16,10 +16,12 @@ export function Header() {
   const [open, setOpen] = useState(false);          // controla o Drawer
 
   const links = [
-    { href: '/', label: 'Início' },
     { href: '/disciplinas', label: 'Disciplinas' },
-    { href: '/sobre', label: 'Sobre' },
   ];
+
+  // Página de módulo: /disciplinas/<slug>/<mod> (exatamente 3 partes não vazias)
+  const parts = pathname.split('/').filter(Boolean);
+  const isModulePage = parts.length === 3 && parts[0] === 'disciplinas';
 
   return (
     <header
@@ -61,8 +63,8 @@ export function Header() {
           <Menu className="h-5 w-5" />
         </ButtonIconOnly>
 
-        {/* Content Presentation view toggle */}
-        <ViewToggle />
+  {/* Content Presentation view toggle (apenas em páginas de módulo) */}
+  {isModulePage && <ViewToggle />}
 
         {/* Theme toggle */}
         <ThemeToggle />
