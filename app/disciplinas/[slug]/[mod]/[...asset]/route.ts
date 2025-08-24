@@ -148,7 +148,8 @@ export async function GET(
         'Cache-Control': cacheFor(m, prod),
         'Accept-Ranges': 'bytes',
       });
-      return new NextResponse(buf, { status: 200, headers: h });
+      // Buffer -> Uint8Array to satisfy BodyInit typing in Next.js (TS) during build
+      return new NextResponse(new Uint8Array(buf), { status: 200, headers: h });
     } else {
       const stream = fs.createReadStream(filePath);
       const h = new Headers({

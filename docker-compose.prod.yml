@@ -1,0 +1,21 @@
+services:
+  web:
+    image: telaclass-app:latest
+    container_name: telaclass-app
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+    networks:
+      - traefik_web
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.telaclass.rule=Host(`telaclass.ufsj.edu.br`)
+      - traefik.http.routers.telaclass.entrypoints=web,websecure
+      - traefik.http.routers.telaclass.tls.certresolver=le
+      - traefik.http.services.telaclass.loadbalancer.server.port=3000
+    expose:
+      - "3000"
+
+networks:
+  traefik_web:
+    external: true

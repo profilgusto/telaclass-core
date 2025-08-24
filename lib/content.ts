@@ -19,11 +19,21 @@ export type CourseEntry = {
     number?: number | null;
 };
 
+export type CourseWorkload = {
+  theoretical?: number;
+  practical?: number;
+};
+
 export type Course = {
-    code: string;
-    title: string;
-    entries: CourseEntry[];
-    [k: string]: unknown;
+  code: string;
+  title: string;
+  entries: CourseEntry[];
+  /** Resumo opcional exibido na home da disciplina */
+  summary?: string;
+  /** Carga horária (parcial) */
+  workload?: CourseWorkload;
+  /** Campos adicionais dinâmicos */
+  [k: string]: unknown;
 };
 
 /** Lê _course.json, aplica numeração automática apenas aos módulos visíveis **/
@@ -44,7 +54,16 @@ export async function getCourse(slug: string): Promise<Course> {
                     : null,
         };
     });
-    return { ...data, entries};
+    // Normaliza campos opcionais conhecidos (para evitar 'unknown' em TS no build)
+    const summary = typeof data.summary === 'string' ? data.summary : undefined;
+    const workload: CourseWorkload | undefined = data.workload && typeof data.workload === 'object'
+      ? {
+          theoretical: typeof data.workload.theoretical === 'number' ? data.workload.theoretical : undefined,
+          practical: typeof data.workload.practical === 'number' ? data.workload.practical : undefined,
+        }
+      : undefined;
+
+    return { ...(data as any), summary, workload, entries } as Course;
 };
 
 /** Lista cursos existentes (pastas que contenham _course.json) retornando slug e título */
