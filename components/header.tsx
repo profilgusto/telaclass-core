@@ -49,6 +49,16 @@ export function Header() {
         className="mx-auto flex h-14 max-w-screen-2xl items-center
                    px-[var(--space-lg)] gap-[var(--space-lg)]"
       >
+        {/* Botão hamburger só em mobile (< md) - agora à esquerda do logo */}
+        <div className="md:hidden">
+          <ButtonIconOnly
+            ariaLabel="Abrir menu"
+            onClick={() => setOpen(true)}
+          >
+            <Menu className="h-5 w-5" />
+          </ButtonIconOnly>
+        </div>
+
         {/* Logo */}
         <Link href="/" className="font-semibold text-lg tracking-tight">
           Telaclass
@@ -69,19 +79,8 @@ export function Header() {
           ))}
         </nav>
 
-        {/* Espaço elástico empurra os ícones para a direita */}
-        <div className="flex-1" />
-
-        {/* Botão hamburger (só mobile) */}
-        {/* Botão hamburger só em mobile (< md) */}
-        <div className="md:hidden">
-          <ButtonIconOnly
-            ariaLabel="Abrir menu"
-            onClick={() => setOpen(true)}
-          >
-            <Menu className="h-5 w-5" />
-          </ButtonIconOnly>
-        </div>
+  {/* Espaço elástico empurra os ícones para a direita */}
+  <div className="flex-1" />
 
   {/* Content Presentation view toggle (apenas em páginas de módulo) */}
   {isModulePage && <ViewToggle />}
