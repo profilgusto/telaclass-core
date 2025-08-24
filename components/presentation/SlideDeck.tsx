@@ -5,6 +5,8 @@ import { useSwipeable } from 'react-swipeable'
 import { useViewMode } from './useViewMode'
 
 import { ArrowLeft, ArrowRight } from 'lucide-react';
+import type { ReactNode } from 'react';
+import { ButtonIconOnly } from '@/components/button-icon-only';
 
 type Range = { start: number; end: number; id: string }
 type Cleanup = () => void
@@ -18,7 +20,7 @@ function slugify(text: string) {
     .replace(/\s+/g, '-')
 }
 
-export default function SlideDeck({ children }: { children: React.ReactNode }) {
+export default function SlideDeck({ children }: { children: ReactNode }) {
   const mode = useViewMode()
   const containerRef = useRef<HTMLDivElement | null>(null)
 
@@ -219,25 +221,25 @@ export default function SlideDeck({ children }: { children: React.ReactNode }) {
           <div className="font-semibold text-sm sm:text-base md:text-lg truncate leading-none" title={title}>{title}</div>
         </div>
         <div className="flex items-stretch gap-2 h-full">
-          <button
-            className="flex h-full w-7 items-center justify-center rounded-md border text-[10px] sm:text-xs disabled:opacity-50 leading-none p-0"
+
+          <ButtonIconOnly
+            ariaLabel="Slide anterior"
             onClick={() => setIndex((i) => Math.max(i - 1, 0))}
-            disabled={index <= 0 || ids.length === 0}
-            aria-label="Slide anterior"
           >
-            <ArrowLeft className="h-12 w-12" />
-          </button>
+            <ArrowLeft />
+          </ButtonIconOnly>
+
           <div className="flex h-full items-center justify-center text-[10px] sm:text-xs font-medium opacity-70 tabular-nums w-14 leading-none select-none">
             {ids.length ? index + 1 : 0}/{ids.length || 0}
           </div>
-          <button
-            className="flex h-full w-7 items-center justify-center rounded-md border text-[10px] sm:text-xs disabled:opacity-50 leading-none p-0"
+
+          <ButtonIconOnly
+            ariaLabel="Próximo slide"
             onClick={() => setIndex((i) => Math.min(i + 1, Math.max(0, ids.length - 1)))}
-            disabled={index >= ids.length - 1 || ids.length === 0}
-            aria-label="Próximo slide"
           >
-            <ArrowRight className="h-8 w-8" />
-          </button>
+            <ArrowRight />
+          </ButtonIconOnly>
+
         </div>
       </div>
 

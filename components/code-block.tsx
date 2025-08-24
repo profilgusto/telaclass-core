@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import hljs from 'highlight.js';
 import '../styles/hljs.css';
 import { Copy, Check } from 'lucide-react';
+import { ButtonIconOnly } from '@/components/button-icon-only';
 import clsx from 'clsx';
 
 type Props = {
@@ -47,14 +48,13 @@ export default function CodeBlock({ code, className }: Props) {
   return (
     <div className="mx-auto my-6 max-w-3xl">
       <div className="relative rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm bg-zinc-50 dark:bg-zinc-900">
-        <button
+        <ButtonIconOnly
+          ariaLabel={copied ? 'Código copiado' : 'Copiar código'}
           onClick={onCopy}
-          aria-label={copied ? 'Código copiado' : 'Copiar código'}
-          title={copied ? 'Copiado' : 'Copiar'}
-          className="absolute right-1 top-1 inline-flex items-center justify-center h-6 w-6 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white/70 dark:bg-zinc-800/70 hover:bg-white dark:hover:bg-zinc-700"
+          className="absolute right-1 top-1 p-0"
         >
           {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-        </button>
+        </ButtonIconOnly>
         {lang && (
           <span className="absolute left-3 top-2 text-[10px] uppercase tracking-wider text-zinc-500">
             {lang}

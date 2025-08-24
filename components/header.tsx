@@ -7,6 +7,7 @@ import { Menu } from 'lucide-react';
 
 import { ThemeToggle } from '@/components/theme-toggle';
 import ViewToggle from '@/components/presentation/ViewToggle';
+import { ButtonIconOnly } from '@/components/button-icon-only';
 
 import { MobileSidebar } from '@/components/mobile-sidebar';
 
@@ -53,13 +54,12 @@ export function Header() {
         <div className="flex-1" />
 
         {/* Botão hamburger (só mobile) */}
-        <button
+        <ButtonIconOnly
+          ariaLabel="Abrir menu"
           onClick={() => setOpen(true)}
-          className="md:hidden p-2 rounded hover:bg-gray-100"
-          aria-label="Abrir menu"
         >
           <Menu className="h-5 w-5" />
-        </button>
+        </ButtonIconOnly>
 
         {/* Content Presentation view toggle */}
         <ViewToggle />
