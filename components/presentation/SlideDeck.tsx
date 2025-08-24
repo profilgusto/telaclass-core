@@ -244,7 +244,7 @@ export default function SlideDeck({ children }: { children: ReactNode }) {
       </div>
 
       {/* Conteúdo; padding-top para não ficar escondido sob a barra (caso não role) */}
-      <div ref={containerRef} className="pt-4">
+  <div ref={containerRef} className="pt-4" suppressHydrationWarning>
         {children}
       </div>
     </div>

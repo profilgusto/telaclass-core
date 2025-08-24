@@ -14,16 +14,14 @@ export default function ViewToggle() {
     <ButtonIconOnly
       ariaLabel={title}
       onClick={() => {
-        setViewMode(next)
-        // Como o hook atual lê o modo na montagem, o reload garante consistência.
-        window.location.reload()
+  setViewMode(next)
       }}
     >
       <span className="hidden sm:inline">
         {mode === 'apresentacao' ? <NotebookText className="h-4 w-4" /> : <Presentation className="h-4 w-4" />}
       </span>
       <span className="sm:hidden">
-        {mode === 'apresentacao' ? 'Texto' : 'Slides'}
+  {mode === 'apresentacao' ? 'Texto' : 'Slides'}
       </span>
     </ButtonIconOnly>
   )
