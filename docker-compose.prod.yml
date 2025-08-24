@@ -7,14 +7,27 @@ services:
       NODE_ENV: production
     networks:
       - traefik_web
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.telaclass.rule=Host(`telaclass.ufsj.edu.br`)
-      - traefik.http.routers.telaclass.entrypoints=web,websecure
-      - traefik.http.routers.telaclass.tls.certresolver=le
-      - traefik.http.services.telaclass.loadbalancer.server.port=3000
     expose:
       - "3000"
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik_web
+
+      # Router HTTPS (porta 443)
+      - traefik.http.routers.telaclass.rule=Host(`telaclass.ufsj.edu.br`)
+      - traefik.http.routers.telaclass.entrypoints=websecure
+      - traefik.http.routers.telaclass.tls.certresolver=le
+
+      # Service interno (porta do container)
+      - traefik.http.services.telaclass.loadbalancer.server.port=3000
+
+      # Router HTTP (porta 80) -> redireciona para HTTPS
+      - traefik.http.routers.telaclass-http.rule=Host(`telaclass.ufsj.edu.br`)
+      - traefik.http.routers.telaclass-http.entrypoints=web
+      - traefik.http.routers.telaclass-http.middlewares=redirect-to-https
+
+      # Middleware de redirecionamento
+      - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
 
 networks:
   traefik_web:
