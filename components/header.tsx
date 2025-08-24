@@ -93,8 +93,6 @@ export function Header() {
           <div className='p-4 space-y-4 text-sm'>
             <nav className='space-x-4'>
               <Link href='/' onClick={() => setOpen(false)}>Início</Link>
-              <Link href='/disciplinas' onClick={() => setOpen(false)}>Disciplinas</Link>
-              <Link href='/sobre' onClick={() => setOpen(false)}>Sobre</Link>
             </nav>
             {isModulePage && courseData && (
               <div className='border-t pt-4'>

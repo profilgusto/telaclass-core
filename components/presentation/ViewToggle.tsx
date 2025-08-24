@@ -21,7 +21,7 @@ export default function ViewToggle() {
         {mode === 'apresentacao' ? <NotebookText className="h-4 w-4" /> : <Presentation className="h-4 w-4" />}
       </span>
       <span className="sm:hidden">
-  {mode === 'apresentacao' ? 'Texto' : 'Slides'}
+  {mode === 'apresentacao' ? <NotebookText className="h-4 w-4" /> : <Presentation className="h-4 w-4" />}
       </span>
     </ButtonIconOnly>
   )

@@ -17,7 +17,7 @@ export function CourseSidebar({
     const normalize = (s: string) => s.replace(/^\/+|\/+$/g, '');
 
     return (
-        <nav className="p-[var(--space-md)] space-y-[var(--space-xs)] text-sm">
+        <nav className="p-[var(--space-md)] space-y-[var(--space-xs)] text-sm overflow-y-auto overscroll-contain h-full">
             {course.entries
                 .filter((e) => e.visible !== false)
                 .map((e: CourseEntry) => {
