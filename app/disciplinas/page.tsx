@@ -18,7 +18,7 @@ export default async function DisciplinasIndex() {
         {cursos.map(c => (
           <li key={c.slug}>
             <Link href={`/disciplinas/${c.slug}`} className="underline hover:no-underline">
-              {c.title} <span className="text-xs text-muted-foreground">({c.slug})</span>
+              {c.title} 
             </Link>
           </li>
         ))}
