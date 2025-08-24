@@ -3,6 +3,7 @@
 import { useTheme } from 'next-themes';
 import { Moon, Sun } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { ButtonIconOnly } from './button-icon-only';
 
 export function ThemeToggle() {
   const { theme, setTheme, resolvedTheme } = useTheme();
@@ -16,10 +17,9 @@ export function ThemeToggle() {
   const isDark = currentTheme === 'dark';
 
   return (
-    <button
-      aria-label="Alternar tema"
+    <ButtonIconOnly
+      ariaLabel="Alternar tema"
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      className="inline-flex items-center p-2 rounded-md border hover:bg-gray-300 dark:hover:bg-gray-700"
     >
       {!mounted ? (
         <Sun className="h-4 w-4" />
@@ -28,7 +28,7 @@ export function ThemeToggle() {
       ) : (
         <Moon className="h-4 w-4" />
       )}
-    </button>
+    </ButtonIconOnly>
   );
 }
 
