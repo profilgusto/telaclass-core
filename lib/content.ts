@@ -47,6 +47,30 @@ export async function getCourse(slug: string): Promise<Course> {
     return { ...data, entries};
 };
 
+/** Lista cursos existentes (pastas que contenham _course.json) retornando slug e título */
+export async function listCourses(): Promise<{ slug: string; title: string }[]> {
+  const dirents = await fs.readdir(base, { withFileTypes: true }).catch(() => []);
+  const out: { slug: string; title: string }[] = [];
+  for (const d of dirents) {
+    if (!d.isDirectory()) continue;
+    const slug = d.name;
+    if (slug.startsWith('.')) continue; // ignora ocultos
+    try {
+      const jsonPath = path.join(base, slug, '_course.json');
+      const raw = await fs.readFile(jsonPath, 'utf8');
+      const data = JSON.parse(raw);
+      const title = data.title || data.code || slug;
+      out.push({ slug, title });
+    } catch {
+      // ignora pastas sem _course.json válido
+      continue;
+    }
+  }
+  // ordena alfabeticamente pelo título
+  out.sort((a, b) => a.title.localeCompare(b.title, 'pt-BR'));
+  return out;
+}
+
 /** Carrega texto.mdx e/ou slides.mdx de uma entrada (RSC-friendly: retorna string crua) **/
 export async function getModule(
   courseSlug: string,
