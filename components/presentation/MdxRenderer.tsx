@@ -49,7 +49,10 @@ export default function MdxRenderer({ manifestKey, slug, mod }: Props) {
         ? s
         : `/disciplinas/${encodeURIComponent(slug)}/${encodeURIComponent(mod)}/${encoded}`
 
-      return <img src={url} alt={alt ?? ''} {...rest} />
+  // Ensure centered image: combine existing className with our defaults
+  const { className, ...others } = rest
+  const merged = ['mx-auto my-6 block', className].filter(Boolean).join(' ')
+  return <img src={url} alt={alt ?? ''} className={merged} {...others} />
     }
   }, [slug, mod])
 

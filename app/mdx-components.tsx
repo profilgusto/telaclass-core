@@ -84,6 +84,12 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     blockquote: (p) => <blockquote className="border-l-4 pl-4 italic my-4" {...p} />,
     hr: (p) => <hr className="my-8" {...p} />,
 
+    // Images: center by default
+    img: (p: any) => {
+      const className = ['mx-auto my-6', p.className ?? ''].join(' ').trim();
+      return <img {...p} className={className} />;
+    },
+
 
     // Preserve user-provided overrides last
     ...components,
