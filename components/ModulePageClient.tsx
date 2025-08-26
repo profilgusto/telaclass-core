@@ -10,11 +10,13 @@ export function ModulePageClient({
   slug,
   mod,
   manifestKey,
+  headings = [],
 }: {
   course: Course
   slug: string
   mod: string
   manifestKey: string
+  headings?: Array<{ id: string; text: string }>
 }) {
   const mode = useViewMode()
   const showSidebar = mode !== 'apresentacao'
@@ -23,7 +25,7 @@ export function ModulePageClient({
   <div className="flex min-h-screen">
       {showSidebar && (
     <aside className="hidden md:block w-60 shrink-0 border-r border-border bg-[var(--sidebar)] text-[var(--sidebar-foreground)] sticky top-14 h-[calc(100vh-56px)]">
-          <CourseSidebar course={course} slug={slug} />
+          <CourseSidebar course={course} slug={slug} currentModulePath={mod} headings={headings} />
         </aside>
       )}
       <main className="flex-1 px-[var(--space-lg)] py-[var(--space-md)]">

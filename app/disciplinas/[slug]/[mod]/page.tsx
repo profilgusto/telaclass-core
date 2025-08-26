@@ -1,6 +1,6 @@
 // app/disciplinas/[slug]/[mod]/page.tsx
 import { notFound } from 'next/navigation';
-import { getCourse } from '@/lib/content';
+import { getCourse, getModuleHeadings } from '@/lib/content';
 import { MDX_MANIFEST } from '@/content/mdx-manifest';
 import { ModulePageClient } from '@/components/ModulePageClient';
 
@@ -34,6 +34,7 @@ export default async function ModulePage({
     notFound();
   }
   const manifestKey = key as string;
+  const headings = await getModuleHeadings(cleanSlug, cleanMod);
 
   return (
     <ModulePageClient
@@ -41,6 +42,7 @@ export default async function ModulePage({
       slug={cleanSlug}
       mod={cleanMod}
       manifestKey={manifestKey}
+  headings={headings}
     />
   );
 }

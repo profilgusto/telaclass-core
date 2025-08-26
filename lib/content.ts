@@ -114,3 +114,52 @@ export async function getModule(
 
   return out;
 }
+
+/** Extrai headings (h2) do arquivo principal de texto do módulo para navegação lateral */
+export async function getModuleHeadings(
+  courseSlug: string,
+  entryPath: string
+): Promise<Array<{ id: string; text: string }>> {
+  // Reutiliza mesma lógica de candidatos do page.tsx
+  const preferred = ['texto.mdx']
+  const fallbacks = ['index.mdx', 'README.mdx']
+  const dir = path.join(base, courseSlug, entryPath)
+  const candidates = [...preferred, ...fallbacks]
+  let filePath: string | null = null
+  for (const f of candidates) {
+    try {
+      await fs.access(path.join(dir, f))
+      filePath = path.join(dir, f)
+      break
+    } catch {
+      continue
+    }
+  }
+  if (!filePath) return []
+  const raw = await fs.readFile(filePath, 'utf8')
+
+  // Simples extração de headings que começam a linha com ## (evita ###)
+  const lines = raw.split(/\r?\n/)
+  const out: Array<{ id: string; text: string }> = []
+  for (const line of lines) {
+    const m = /^\s*##\s+(.+?)\s*$/.exec(line)
+    if (m) {
+      let text = m[1]
+      // Remove markdown inline formatting roughly
+      text = text
+        .replace(/`([^`]+)`/g, '$1')
+        .replace(/\*\*([^*]+)\*\*/g, '$1')
+        .replace(/\*([^*]+)\*/g, '$1')
+        .replace(/\[(.+?)\]\([^)]*\)/g, '$1')
+        .replace(/<[^>]+>/g, '')
+        .trim()
+      const id = text
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9\-]/g, '')
+      if (text) out.push({ id, text })
+    }
+  }
+  return out
+}

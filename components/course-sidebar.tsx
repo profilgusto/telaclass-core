@@ -9,9 +9,13 @@ import type { CourseEntry } from '@/lib/content';
 export function CourseSidebar({ 
     course, 
     slug, 
+    currentModulePath,
+    headings = [],
 }: { 
     course: Course; 
     slug: string; 
+    currentModulePath?: string;
+    headings?: Array<{ id: string; text: string }>;
 }) {
     const pathname = usePathname();
     const normalize = (s: string) => s.replace(/^\/+|\/+$/g, '');
@@ -24,19 +28,34 @@ export function CourseSidebar({
                     const slugPath = normalize(e.path as string);
                     const href = `/disciplinas/${slug}/${slugPath}`;
                     const active = normalize(pathname) === normalize(href);
-
+                    const isCurrentModule = currentModulePath && normalize(currentModulePath) === slugPath && e.type === 'module';
                     return (
-                        <Link 
-                            key={e.id}
-                            href={href}
-                            className={clsx(
-                                'block hover:underline',
-                                active && 'font-medium'
+                        <div key={e.id}>
+                            <Link 
+                                href={href}
+                                className={clsx(
+                                    'block hover:underline',
+                                    active && 'font-medium'
+                                )}
+                            >
+                                {e.type === 'module' && e.number ? `${e.number}. ` : ''}
+                                {e.title}
+                            </Link>
+                            {isCurrentModule && headings.length > 0 && (
+                                <ul className="ml-4 mt-1 space-y-1 border-l border-border pl-3 text-xs">
+                                    {headings.map(h => (
+                                        <li key={h.id}>
+                                            <a
+                                              href={`${href}#${h.id}`}
+                                              className={clsx('block opacity-80 hover:opacity-100 hover:underline', normalize(pathname) === normalize(`${href}#${h.id}`) && 'opacity-100')}
+                                            >
+                                              {h.text}
+                                            </a>
+                                        </li>
+                                    ))}
+                                </ul>
                             )}
-                        >
-                            {e.type === 'module' && e.number ? `${e.number}. ` : ''}
-                            {e.title}
-                        </Link>
+                        </div>
                     );
                 })}
         </nav>
