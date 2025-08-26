@@ -52,7 +52,13 @@ export default function MdxRenderer({ manifestKey, slug, mod }: Props) {
   // Ensure centered image: combine existing className with our defaults
   const { className, ...others } = rest
   const merged = ['mx-auto my-6 block', className].filter(Boolean).join(' ')
-  return <img src={url} alt={alt ?? ''} className={merged} {...others} />
+  if (!alt) return <img src={url} alt="" className={merged} {...others} />
+  return (
+    <figure className="my-6 flex flex-col items-center text-center">
+      <img src={url} alt={alt} className={merged} {...others} />
+      <figcaption className="mt-2 text-sm opacity-80 max-w-prose">{alt}</figcaption>
+    </figure>
+  )
     }
   }, [slug, mod])
 

@@ -36,7 +36,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     // Headings
   h1: (p) => <h1 className="text-3xl font-bold mt-8 mb-4 text-center" {...p} />,
-    h2: (p) => <h2 className="text-2xl font-semibold mt-6 mb-3" {...p} />,
+    h2: (p) => <h2 className="text-2xl font-semibold mt-16 mb-2" {...p} />,
     h3: (p) => <h3 className="text-xl font-semibold mt-4 mb-2" {...p} />,
 
     // Text
@@ -86,8 +86,19 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
 
     // Images: center by default
     img: (p: any) => {
-      const className = ['mx-auto my-6', p.className ?? ''].join(' ').trim();
-      return <img {...p} className={className} />;
+      const { alt, className, ...rest } = p;
+      const imgClass = ['mx-auto', className ?? ''].join(' ').trim();
+      if (!alt) {
+        return <img alt="" {...rest} className={imgClass} />;
+      }
+      return (
+        <figure className="my-6 flex flex-col items-center text-center">
+          <img alt={alt} {...rest} className={imgClass} />
+          <figcaption className="mt-2 text-sm text-muted-foreground max-w-prose">
+            {alt}
+          </figcaption>
+        </figure>
+      );
     },
 
     // Audio: centered player
