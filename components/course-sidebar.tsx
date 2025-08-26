@@ -11,11 +11,13 @@ export function CourseSidebar({
     slug, 
     currentModulePath,
     headings = [],
+    currentHeadingId,
 }: { 
     course: Course; 
     slug: string; 
     currentModulePath?: string;
     headings?: Array<{ id: string; text: string }>;
+    currentHeadingId?: string | null;
 }) {
     const pathname = usePathname();
     const normalize = (s: string) => s.replace(/^\/+|\/+$/g, '');
@@ -41,13 +43,19 @@ export function CourseSidebar({
                                 {e.type === 'module' && e.number ? `${e.number}. ` : ''}
                                 {e.title}
                             </Link>
-                            {isCurrentModule && headings.length > 0 && (
+                                                        {isCurrentModule && headings.length > 0 && (
                                 <ul className="ml-4 mt-1 space-y-1 border-l border-border pl-3 text-xs">
                                     {headings.map(h => (
                                         <li key={h.id}>
                                             <a
-                                              href={`${href}#${h.id}`}
-                                              className={clsx('block opacity-80 hover:opacity-100 hover:underline', normalize(pathname) === normalize(`${href}#${h.id}`) && 'opacity-100')}
+                                                                                            href={`${href}#${h.id}`}
+                                                                                            className={clsx(
+                                                                                                'block hover:underline transition-colors',
+                                                                                                currentHeadingId === h.id
+                                                                                                    ? 'opacity-100 font-medium text-primary'
+                                                                                                    : 'opacity-70 hover:opacity-100'
+                                                                                            )}
+                                                                                            aria-current={currentHeadingId === h.id ? 'true' : undefined}
                                             >
                                               {h.text}
                                             </a>
