@@ -1,5 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
+// Simplified AST tooling imports (static) for heading extraction
+import { extractHeadingsFromSource } from './mdx-pipeline';
 
 const base = path.join(process.cwd(), 'content/disciplinas');
 
@@ -131,35 +133,11 @@ export async function getModuleHeadings(
       await fs.access(path.join(dir, f))
       filePath = path.join(dir, f)
       break
-    } catch {
+    } catch {''
       continue
     }
   }
   if (!filePath) return []
   const raw = await fs.readFile(filePath, 'utf8')
-
-  // Simples extração de headings que começam a linha com ## (evita ###)
-  const lines = raw.split(/\r?\n/)
-  const out: Array<{ id: string; text: string }> = []
-  for (const line of lines) {
-    const m = /^\s*##\s+(.+?)\s*$/.exec(line)
-    if (m) {
-      let text = m[1]
-      // Remove markdown inline formatting roughly
-      text = text
-        .replace(/`([^`]+)`/g, '$1')
-        .replace(/\*\*([^*]+)\*\*/g, '$1')
-        .replace(/\*([^*]+)\*/g, '$1')
-        .replace(/\[(.+?)\]\([^)]*\)/g, '$1')
-        .replace(/<[^>]+>/g, '')
-        .trim()
-      const id = text
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, '-')
-        .replace(/[^a-z0-9\-]/g, '')
-      if (text) out.push({ id, text })
-    }
-  }
-  return out
+  return extractHeadingsFromSource(raw)
 }
