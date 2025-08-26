@@ -45,7 +45,30 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     h3: (p) => <h3 className="text-xl font-semibold mt-4 mb-2" {...p} />,
 
     // Text
-    p: (p) => <p className="leading-7 my-1" {...p} />,
+    p: ({ children, ...rest }) => {
+      // Transform <p><img|Img alt="..."/></p> → <figure>...</figure>
+      const kids = React.Children.toArray(children)
+      if (kids.length === 1 && React.isValidElement(kids[0])) {
+        const el: any = kids[0]
+        const isHtmlImg = typeof el.type === 'string' && el.type === 'img'
+        const isImgComponent = typeof el.type === 'function' && /Img/i.test(el.type.name || '')
+        const seemsImage = (el.props && typeof el.props.alt === 'string' && (el.props.src || isHtmlImg || isImgComponent))
+        if (isHtmlImg || isImgComponent || seemsImage) {
+          const alt = el.props?.alt
+          const mergedClass = ['mx-auto','block', el.props?.className].filter(Boolean).join(' ')
+            if (alt) {
+              return (
+                <figure className="my-6 flex flex-col items-center text-center">
+                  {React.cloneElement(el, { className: mergedClass })}
+                  <figcaption className="mt-2 text-sm text-muted-foreground max-w-prose">{alt}</figcaption>
+                </figure>
+              )
+            }
+            return React.cloneElement(el, { className: mergedClass })
+        }
+      }
+      return <p className="leading-7 mb-4 last:mb-0" {...rest}>{children}</p>
+    },
     strong: (p) => <strong className="font-semibold" {...p} />,
     em: (p) => <em className="italic" {...p} />,
 
@@ -91,19 +114,10 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
 
     // Images: center by default
     img: (p: any) => {
-      const { alt, className, ...rest } = p;
-      const imgClass = ['mx-auto', className ?? ''].join(' ').trim();
-      if (!alt) {
-        return <img alt="" {...rest} className={imgClass} />;
-      }
-      return (
-        <figure className="my-6 flex flex-col items-center text-center">
-          <img alt={alt} {...rest} className={imgClass} />
-          <figcaption className="mt-2 text-sm text-muted-foreground max-w-prose">
-            {alt}
-          </figcaption>
-        </figure>
-      );
+      // Plain img used directly (not inside markdown paragraph) → center by default.
+      const { className, ...rest } = p;
+      const merged = ['mx-auto','block','my-6', className].filter(Boolean).join(' ')
+      return <img {...rest} className={merged} />
     },
 
     // Audio: centered player

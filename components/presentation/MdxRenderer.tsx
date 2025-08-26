@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, cloneElement } from 'react'
 import { MDXProvider } from '@mdx-js/react'
 import SlideDeck from '@/components/presentation/SlideDeck'
 import Slide from '@/components/presentation/Slide'
@@ -49,16 +49,10 @@ export default function MdxRenderer({ manifestKey, slug, mod }: Props) {
         ? s
         : `/disciplinas/${encodeURIComponent(slug)}/${encodeURIComponent(mod)}/${encoded}`
 
-  // Ensure centered image: combine existing className with our defaults
+  // Return plain img; paragraph override will convert to figure if needed
   const { className, ...others } = rest
-  const merged = ['mx-auto my-6 block', className].filter(Boolean).join(' ')
-  if (!alt) return <img src={url} alt="" className={merged} {...others} />
-  return (
-    <figure className="my-6 flex flex-col items-center text-center">
-      <img src={url} alt={alt} className={merged} {...others} />
-      <figcaption className="mt-2 text-sm opacity-80 max-w-prose">{alt}</figcaption>
-    </figure>
-  )
+  const merged = ['mx-auto','block', className].filter(Boolean).join(' ')
+  return <img src={url} alt={alt} className={merged} {...others} />
     }
   }, [slug, mod])
 
@@ -119,7 +113,38 @@ export default function MdxRenderer({ manifestKey, slug, mod }: Props) {
   }, [slug, mod])
 
   const components = useMemo(
-    () => ({ img: Img, a: A, Slide, PresentOnly, TextOnly, ...MediaResolvers }),
+    () => ({
+      // Unwrap <p><figure/></p> produced by MDX so figure is not inside paragraph
+      p: ({ children, ...rest }: any) => {
+        const arr = Array.isArray(children) ? children : [children]
+        if (arr.length === 1 && arr[0] && typeof arr[0] === 'object') {
+          const el: any = arr[0]
+          const isHtmlImg = el.type === 'img'
+          const isImgComponent = typeof el.type === 'function' && /Img/i.test(el.type.name || '')
+          const seemsImage = (el.props && typeof el.props.alt === 'string' && (el.props.src || isHtmlImg || isImgComponent))
+          if (isHtmlImg || isImgComponent || seemsImage) {
+            const alt = el.props?.alt
+            const base = ['mx-auto','block', el.props.className].filter(Boolean).join(' ')
+            if (alt) {
+              return (
+                <figure className="my-6 flex flex-col items-center text-center">
+                  {cloneElement(el, { className: base })}
+                  <figcaption className="mt-2 text-sm opacity-80 max-w-prose">{alt}</figcaption>
+                </figure>
+              )
+            }
+            return cloneElement(el, { className: base })
+          }
+        }
+        return <p className={['leading-7','mb-4','last:mb-0', rest.className].filter(Boolean).join(' ')} {...rest}>{children}</p>
+      },
+      img: Img,
+      a: A,
+      Slide,
+      PresentOnly,
+      TextOnly,
+      ...MediaResolvers
+    }),
     [Img, A, MediaResolvers]
   )
 
@@ -128,12 +153,12 @@ export default function MdxRenderer({ manifestKey, slug, mod }: Props) {
   }
 
   return (
-    <SlideDeck>
+    <SlideDeck children={
       <MDXProvider components={components}>
         <div className="prose max-w-none">
           <MDX components={components} />
         </div>
       </MDXProvider>
-    </SlideDeck>
+    } />
   )
 }
