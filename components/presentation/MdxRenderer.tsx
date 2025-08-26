@@ -90,9 +90,31 @@ export default function MdxRenderer({ manifestKey, slug, mod }: Props) {
     }
   }, [slug, mod])
 
+  const MediaResolvers = useMemo(() => {
+    function normalize(src: string | undefined) {
+      const s = typeof src === 'string' ? src : ''
+      const isAbs = /^([a-z]+:)?\/\//i.test(s) || s.startsWith('/')
+      if (isAbs) return s
+      const normalized = s.replace(/^\.\/?/, '')
+      const encoded = normalized.split('/').map(encodeURIComponent).join('/')
+      return `/disciplinas/${encodeURIComponent(slug)}/${encodeURIComponent(mod)}/${encoded}`
+    }
+    const Audio = (p: any) => {
+      const { className, src, ...rest } = p
+      const merged = ['block mx-auto my-6 w-full max-w-xl', className].filter(Boolean).join(' ')
+      return <audio src={normalize(src)} className={merged} {...rest} />
+    }
+    const Video = (p: any) => {
+      const { className, src, ...rest } = p
+      const merged = ['block mx-auto my-8 w-full max-w-4xl aspect-video rounded-lg bg-black', className].filter(Boolean).join(' ')
+      return <video src={normalize(src)} className={merged} {...rest} />
+    }
+    return { audio: Audio, video: Video }
+  }, [slug, mod])
+
   const components = useMemo(
-    () => ({ img: Img, a: A, Slide, PresentOnly, TextOnly }),
-    [Img, A]
+    () => ({ img: Img, a: A, Slide, PresentOnly, TextOnly, ...MediaResolvers }),
+    [Img, A, MediaResolvers]
   )
 
   if (!MDX) {

@@ -90,6 +90,23 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       return <img {...p} className={className} />;
     },
 
+    // Audio: centered player
+    audio: (p: any) => {
+      const { className, ...rest } = p;
+      const merged = ['block mx-auto my-6 w-full max-w-xl', className].filter(Boolean).join(' ');
+      return <audio {...rest} className={merged} />;
+    },
+
+    // Video: responsive, centered, constrained width
+    video: (p: any) => {
+      const { className, ...rest } = p;
+      const merged = [
+        'block mx-auto my-8 w-full max-w-4xl aspect-video rounded-lg bg-black',
+        className,
+      ].filter(Boolean).join(' ');
+      return <video {...rest} className={merged} />;
+    },
+
 
     // Preserve user-provided overrides last
     ...components,
