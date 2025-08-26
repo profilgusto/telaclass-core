@@ -2,8 +2,9 @@
 
 import { Course } from '@/lib/content'
 import { CourseSidebar } from '@/components/course-sidebar'
-import MdxRenderer from '@/components/presentation/MdxRenderer'
 import { useViewMode } from '@/components/presentation/useViewMode'
+import { ContentTextRender } from '@/components/module/ContentTextRender'
+import { ContentSlideRender } from '@/components/module/ContentSlideRender'
 
 export function ModulePageClient({
   course,
@@ -19,18 +20,23 @@ export function ModulePageClient({
   headings?: Array<{ id: string; text: string }>
 }) {
   const mode = useViewMode()
-  const showSidebar = mode !== 'apresentacao'
-
+  // Keep both mounted so switching mode does not re-fetch or lose state.
   return (
-  <div className="flex min-h-screen">
-      {showSidebar && (
-    <aside className="hidden md:block w-60 shrink-0 border-r border-border bg-[var(--sidebar)] text-[var(--sidebar-foreground)] sticky top-14 h-[calc(100vh-56px)]">
-          <CourseSidebar course={course} slug={slug} currentModulePath={mod} headings={headings} />
-        </aside>
-      )}
-      <main className="flex-1 px-[var(--space-lg)] py-[var(--space-md)]">
-        <MdxRenderer manifestKey={manifestKey} slug={slug} mod={mod} />
-      </main>
-    </div>
+    <>
+      <ContentTextRender
+        course={course}
+        slug={slug}
+        mod={mod}
+        manifestKey={manifestKey}
+        headings={headings}
+        active={mode === 'texto'}
+      />
+      <ContentSlideRender
+        manifestKey={manifestKey}
+        slug={slug}
+        mod={mod}
+        active={mode === 'apresentacao'}
+      />
+    </>
   )
 }
