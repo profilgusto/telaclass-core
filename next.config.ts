@@ -4,6 +4,7 @@ import type { NextConfig } from 'next';
 
 // Plugins para matemática em MDX
 import remarkMath from 'remark-math';
+import remarkGfm from 'remark-gfm';
 import rehypeMathjax from 'rehype-mathjax'; // alias para a variante SVG
 import remarkDirective from 'remark-directive'
 import rehypeSlug from 'rehype-slug'
@@ -64,7 +65,7 @@ const withMDX = createMDX({
   extension: /\.mdx?$/,
   options: {
     // Habilita $...$ (inline) e $$...$$ (display)
-    remarkPlugins: [remarkMath, remarkDirective, remarkDirectiveToMdx],
+  remarkPlugins: [remarkMath, remarkDirective, remarkGfm, remarkDirectiveToMdx],
     // Renderiza com MathJax no build (SSR) e numerações automáticas
     rehypePlugins: [
       [

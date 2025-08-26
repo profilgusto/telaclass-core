@@ -40,7 +40,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     h3: (p) => <h3 className="text-xl font-semibold mt-4 mb-2" {...p} />,
 
     // Text
-    p: (p) => <p className="leading-7 my-4" {...p} />,
+    p: (p) => <p className="leading-7 my-1" {...p} />,
     strong: (p) => <strong className="font-semibold" {...p} />,
     em: (p) => <em className="italic" {...p} />,
 
