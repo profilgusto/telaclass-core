@@ -59,26 +59,3 @@ const nextConfig: NextConfig = {
 };
 
 export default withMDX(nextConfig);
-
-/* --- Alternativa CHTML (opcional, se quiser trocar para CHTML) ---
-import rehypeMathjaxChtml from 'rehype-mathjax/chtml';
-const withMDX = createMDX({
-  extension: /\.mdx?$/,
-  options: {
-    remarkPlugins: [remarkMath],
-    rehypePlugins: [
-      [
-        rehypeMathjaxChtml,
-        {
-          tex: { tags: 'all', useLabelIds: true },
-          chtml: {
-            // obrigatório para CHTML: URL das fontes WOFF v2 do MathJax
-            fontURL:
-              'https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2',
-          },
-        },
-      ],
-    ],
-  },
-});
------------------------------------------------------------------- */
