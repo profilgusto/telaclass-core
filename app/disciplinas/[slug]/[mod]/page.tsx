@@ -22,18 +22,11 @@ export default async function ModulePage({
   if (!entry) {
     notFound();
   }
-
-  const preferred = ['texto.mdx'];
-  const fallbacks = ['index.mdx', 'README.mdx'];
-  const candidates = [
-    ...preferred.map((f) => `/${cleanSlug}/${cleanMod}/${f}`),
-    ...fallbacks.map((f) => `/${cleanSlug}/${cleanMod}/${f}`),
-  ];
-  const key = candidates.find((k) => k in MDX_MANIFEST);
-  if (!key) {
+  // Always expect a single canonical MDX file: content.mdx
+  const manifestKey = `/${cleanSlug}/${cleanMod}/content.mdx`;
+  if (!(manifestKey in MDX_MANIFEST)) {
     notFound();
   }
-  const manifestKey = key as string;
   const headings = await getModuleHeadings(cleanSlug, cleanMod);
 
   return (
@@ -42,7 +35,7 @@ export default async function ModulePage({
       slug={cleanSlug}
       mod={cleanMod}
       manifestKey={manifestKey}
-  headings={headings}
+      headings={headings}
     />
   );
 }

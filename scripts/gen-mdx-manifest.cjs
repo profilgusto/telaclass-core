@@ -6,7 +6,8 @@ const { resolve, sep } = require('node:path');
 const ROOT = resolve(process.cwd(), 'content/disciplinas');
 
 (async () => {
-  const files = await fg(['**/texto.mdx', '**/slide.mdx', '!**/_bak/**'], { cwd: ROOT });
+  // Collect only canonical module content files
+  const files = await fg(['**/content.mdx', '!**/_bak/**'], { cwd: ROOT });
 
   const entries = files.map((rel) => {
     const key = '/' + rel.split(sep).join('/');

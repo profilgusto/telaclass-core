@@ -13,7 +13,7 @@ export type CourseEntry = {
     type: 'module' | 'activity' | 'info' | string;
     /** Título visível no sidebar e cabeçalhos */
     title: string;
-    /** Slug / subpasta onde residem texto.mdx e slides.mdx */
+  /** Slug / subpasta onde residem content.mdx e slides.mdx */
     path: string;
     /** Flag de publicação; false oculta do menu e do SSG */
     visible?: boolean;
@@ -92,28 +92,21 @@ export async function listCourses(): Promise<{ slug: string; title: string }[]> 
   return out;
 }
 
-/** Carrega texto.mdx e/ou slides.mdx de uma entrada (RSC-friendly: retorna string crua) **/
+/** Carrega conteúdo canônico (content.mdx) e opcionalmente slides.mdx (RSC-friendly: retorna string crua) **/
 export async function getModule(
   courseSlug: string,
   entryPath: string
-): Promise<{ texto?: string; slides?: string }> {
-  
+): Promise<{ content?: string; slides?: string }> {
   const dir = path.join(base, courseSlug, entryPath);
   const files: string[] = (await fs.readdir(dir).catch(() => [])) as string[];
-
-  const out: { texto?: string; slides?: string } = {};
-
-  const read = async (file: string) =>
-    fs.readFile(path.join(dir, file), 'utf8');
-
-  if (files.includes('texto.mdx')) {
-    out.texto = await read('texto.mdx');
+  const out: { content?: string; slides?: string } = {};
+  const read = async (file: string) => fs.readFile(path.join(dir, file), 'utf8');
+  if (files.includes('content.mdx')) {
+    out.content = await read('content.mdx');
   }
-
   if (files.includes('slides.mdx')) {
     out.slides = await read('slides.mdx');
   }
-
   return out;
 }
 
@@ -122,22 +115,13 @@ export async function getModuleHeadings(
   courseSlug: string,
   entryPath: string
 ): Promise<Array<{ id: string; text: string }>> {
-  // Reutiliza mesma lógica de candidatos do page.tsx
-  const preferred = ['texto.mdx']
-  const fallbacks = ['index.mdx', 'README.mdx']
-  const dir = path.join(base, courseSlug, entryPath)
-  const candidates = [...preferred, ...fallbacks]
-  let filePath: string | null = null
-  for (const f of candidates) {
-    try {
-      await fs.access(path.join(dir, f))
-      filePath = path.join(dir, f)
-      break
-    } catch {''
-      continue
-    }
+  const dir = path.join(base, courseSlug, entryPath);
+  const filePath = path.join(dir, 'content.mdx');
+  try {
+    await fs.access(filePath);
+  } catch {
+    return [];
   }
-  if (!filePath) return []
-  const raw = await fs.readFile(filePath, 'utf8')
-  return extractHeadingsFromSource(raw)
+  const raw = await fs.readFile(filePath, 'utf8');
+  return extractHeadingsFromSource(raw);
 }
