@@ -2,6 +2,7 @@
 import React, { useMemo, cloneElement } from 'react'
 import Slide from '@/components/presentation/Slide'
 import { PresentOnly, TextOnly } from '@/components/presentation/Only'
+import { useViewMode } from '@/components/presentation/useViewMode'
 
 export interface OverrideDeps {
   slug: string
@@ -84,15 +85,27 @@ export function useMdxOverrides({ slug, mod }: OverrideDeps) {
     }
   }, [])
 
-  const components = useMemo(() => ({
-    p: Paragraph,
-    img: Img,
-    a: A,
-    Slide,
-    PresentOnly,
-    TextOnly,
-    ...MediaResolvers
-  }), [Paragraph, Img, A, MediaResolvers])
+  const components = useMemo(() => {
+    const H2 = (p: any) => {
+      const mode = useViewMode()
+      return (
+        <>
+          {mode === 'texto' && <hr className="mt-16 mb-0 border-t border-border" />}
+          <h2 className={['text-2xl','font-semibold','mt-2','mb-4', p.className].filter(Boolean).join(' ')} {...p} />
+        </>
+      )
+    }
+    return {
+      p: Paragraph,
+      h2: H2,
+      img: Img,
+      a: A,
+      Slide,
+      PresentOnly,
+      TextOnly,
+      ...MediaResolvers
+    }
+  }, [Paragraph, Img, A, MediaResolvers])
 
   return components
 }
