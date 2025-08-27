@@ -68,10 +68,10 @@ export async function getCourse(slug: string): Promise<Course> {
     return { ...(data as any), summary, workload, entries } as Course;
 };
 
-/** Lista cursos existentes (pastas que contenham _course.json) retornando slug e título */
-export async function listCourses(): Promise<{ slug: string; title: string }[]> {
+/** Lista cursos existentes (pastas que contenham _course.json) retornando slug, título e código */
+export async function listCourses(): Promise<{ slug: string; title: string; code: string }[]> {
   const dirents = await fs.readdir(base, { withFileTypes: true }).catch(() => []);
-  const out: { slug: string; title: string }[] = [];
+  const out: { slug: string; title: string; code: string }[] = [];
   for (const d of dirents) {
     if (!d.isDirectory()) continue;
     const slug = d.name;
@@ -80,8 +80,9 @@ export async function listCourses(): Promise<{ slug: string; title: string }[]> 
       const jsonPath = path.join(base, slug, '_course.json');
       const raw = await fs.readFile(jsonPath, 'utf8');
       const data = JSON.parse(raw);
-      const title = data.title || data.code || slug;
-      out.push({ slug, title });
+      const code: string = data.code || slug;
+      const title: string = data.title || code || slug;
+      out.push({ slug, title, code });
     } catch {
       // ignora pastas sem _course.json válido
       continue;

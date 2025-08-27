@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { listCourses } from '@/lib/content';
+import { buttonVariants } from '@/components/ui/button';
+import clsx from 'clsx';
 
 export const dynamic = 'force-dynamic'; // garante leitura em runtime durante dev
 
@@ -11,18 +13,24 @@ export default async function DisciplinasIndex() {
         <h1 className="text-3xl font-bold tracking-tight">Disciplinas</h1>
         <p className="text-muted-foreground">Os conteúdos atualmente cadastrados são:</p>
       </header>
-      <ul className="space-y-3 list-disc pl-6">
-        {cursos.length === 0 && (
-          <li className="list-none pl-0 text-sm text-muted-foreground">Nenhuma disciplina encontrada.</li>
-        )}
-        {cursos.map(c => (
-          <li key={c.slug}>
-            <Link href={`/disciplinas/${c.slug}`} className="underline hover:no-underline">
-              {c.title} 
-            </Link>
-          </li>
+      {cursos.length === 0 && (
+        <p className="text-sm text-muted-foreground">Nenhuma disciplina encontrada.</p>
+      )}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    {cursos.map(c => (
+          <Link
+            key={c.slug}
+            href={`/disciplinas/${c.slug}`}
+            className={clsx(
+              buttonVariants({ variant: 'secondary', size: 'lg' }),
+              'justify-start h-auto py-6 flex flex-col items-start space-y-2 text-left'
+            )}
+          >
+            <span className="font-semibold text-base leading-snug line-clamp-2">{c.title}</span>
+      <span className="text-[10px] uppercase tracking-wide opacity-60">{c.code}</span>
+          </Link>
         ))}
-      </ul>
+      </div>
     </main>
   );
 }
