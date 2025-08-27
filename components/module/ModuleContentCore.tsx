@@ -49,7 +49,12 @@ export function ModuleContentCore({ manifestKey, slug, mod, mode, wrapWithSlideD
 
   const content = (
     <MDXProvider components={components}>
-      <div className="prose max-w-none">
+      <div
+        className={[
+          'prose max-w-none',
+          mode === 'apresentacao' && 'prose-presentation'
+        ].filter(Boolean).join(' ')}
+      >
         <MDX components={components} />
       </div>
     </MDXProvider>

@@ -212,10 +212,10 @@ export default function SlideDeck({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="relative mx-auto w-full" {...bind}>
+    <div className="presentation-deck relative mx-auto w-full" {...bind}>
       {/* Barra fixa de controles no topo */}
       <div
-        className="sticky top-0 z-20 w-full border-b bg-[var(--bg)]/85 backdrop-blur supports-[backdrop-filter]:bg-[var(--bg)]/70 flex items-stretch gap-3 px-3 h-6"
+        className="sticky top-0 z-20 w-full border-b bg-[var(--bg)]/85 backdrop-blur supports-[backdrop-filter]:bg-[var(--bg)]/70 flex items-stretch gap-3 px-2 sm:px-3 h-6"
       >
         <div className="flex-1 min-w-0 h-full flex items-center">
           <div className="font-semibold text-sm sm:text-base md:text-lg truncate leading-none" title={title}>{title}</div>
@@ -244,7 +244,7 @@ export default function SlideDeck({ children }: { children: ReactNode }) {
       </div>
 
       {/* Conteúdo; padding-top para não ficar escondido sob a barra (caso não role) */}
-  <div ref={containerRef} className="pt-4" suppressHydrationWarning>
+  <div ref={containerRef} className="pt-2 sm:pt-3" suppressHydrationWarning>
         {children}
       </div>
     </div>

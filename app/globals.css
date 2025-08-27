@@ -177,3 +177,84 @@ mjx-container:not([display="true"]) {
   /* opcional: esconder header ao imprimir */
   .print-hide { display: none !important; }
 }
+
+/* =============================
+   Presentation mode overrides
+   -----------------------------
+   Applied only when ModuleContentCore adds .prose-presentation
+   and content is wrapped by .presentation-deck
+   Goals:
+   - Larger base text for readability when projected
+   - Larger H2 (slide titles)
+   - Reduced horizontal padding inside slides
+   - H2 closer to the top bar (less top margin)
+============================== */
+.presentation-deck .prose-presentation {
+  /* Slightly larger base font */
+  font-size: 1.1rem;
+  line-height: 1.55;
+}
+
+/* Headings scale up */
+.presentation-deck .prose-presentation h1 {
+  font-size: clamp(2.25rem, 4vw + 1rem, 3.25rem);
+  line-height: 1.1;
+}
+.presentation-deck .prose-presentation h2 {
+  font-size: clamp(1.9rem, 2.8vw + 0.75rem, 2.5rem);
+  line-height: 1.15;
+  margin-top: 0.25rem; /* closer to top bar */
+  margin-bottom: 0.9rem;
+}
+
+/* Paragraph spacing tighter vertically (more content per slide) */
+.presentation-deck .prose-presentation p {
+  margin-top: 0.5rem;
+  margin-bottom: 0.9rem;
+  font-size: 1.08em; /* relative bump */
+}
+
+/* Lists slightly larger with tighter spacing */
+.presentation-deck .prose-presentation ul,
+.presentation-deck .prose-presentation ol {
+  padding-left: 1.05em;
+  margin-top: 0.4rem;
+  margin-bottom: 0.9rem;
+  font-size: 1.05em;
+}
+.presentation-deck .prose-presentation li + li {
+  margin-top: 0.35rem;
+}
+
+/* Links: higher underline visibility for projection */
+.presentation-deck .prose-presentation a {
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+/* Code blocks slightly larger */
+.presentation-deck .prose-presentation pre,
+.presentation-deck .prose-presentation code {
+  font-size: 0.95em;
+}
+
+/* Slide sections: reduce internal horizontal padding (Tailwind classes already set, this is a fine-tune) */
+.presentation-deck section[data-id] {
+  padding-left: clamp(0.75rem, 2vw, 1.25rem);
+  padding-right: clamp(0.75rem, 2vw, 1.25rem);
+}
+
+/* Intro slide keep its larger layout but respect horizontal tightening */
+.presentation-deck .intro-slide {
+  padding-left: clamp(0.75rem, 2vw, 1.25rem) !important;
+  padding-right: clamp(0.75rem, 2vw, 1.25rem) !important;
+}
+
+/* Make sure figures adapt */
+.presentation-deck .prose-presentation figure { margin: 1rem auto; }
+.presentation-deck .prose-presentation figcaption { font-size: 0.8em; }
+
+@media (min-width: 1024px) {
+  .presentation-deck .prose-presentation { font-size: 1.15rem; }
+  .presentation-deck .prose-presentation p { font-size: 1.1em; }
+}
