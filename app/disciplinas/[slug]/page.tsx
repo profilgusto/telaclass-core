@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { getCourse } from '@/lib/content';
+import { buttonVariants } from '@/components/ui/button';
+import clsx from 'clsx';
 
 export default async function DisciplinaHome({
   params,
@@ -45,18 +47,21 @@ export default async function DisciplinaHome({
             Nenhum módulo visível cadastrado.
           </p>
         )}
-        <ol className="space-y-2 list-decimal pl-5">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {modules.map((m) => (
-            <li key={m.id}>
-              <Link
-                href={`/disciplinas/${slug}/${m.path}`}
-                className="underline hover:no-underline"
-              >
-                {m.number ? `${m.number}. ` : ''}{m.title}
-              </Link>
-            </li>
+            <Link
+              key={m.id}
+              href={`/disciplinas/${slug}/${m.path}`}
+              className={clsx(
+                buttonVariants({ variant: 'outline', size: 'lg' }),
+                'justify-start h-auto py-4 flex flex-col items-start space-y-1 text-left'
+              )}
+            >
+              <span className="text-xs uppercase tracking-wide opacity-60">{m.number ? `Módulo ${m.number}` : 'Módulo'}</span>
+              <span className="font-medium leading-snug line-clamp-2">{m.title}</span>
+            </Link>
           ))}
-        </ol>
+        </div>
       </section>
     </main>
   );
