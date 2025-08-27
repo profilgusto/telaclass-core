@@ -33,6 +33,8 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/content ./content
 ## (Opcional) copiar next.config.ts se usado para runtime features
 COPY --from=builder /app/next.config.ts ./next.config.ts
+## Custom MDX/remark/rehype plugins referenced by next.config.ts at runtime
+COPY --from=builder /app/mdx-plugins ./mdx-plugins
 
 EXPOSE 3000
 CMD ["npm", "start"]
