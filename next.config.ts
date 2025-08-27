@@ -28,24 +28,19 @@ const withMDX = createMDX({
     // Habilita $...$ (inline) e $$...$$ (display)
   remarkPlugins: [remarkMath, remarkDirective, remarkGfm, remarkDirectiveToMdx],
     // Renderiza com MathJax no build (SSR) e numerações automáticas
+    // IMPORTANTE: cada plugin como entrada separada; antes rehypeSlug/WrapH2 eram passados como args extras de rehypeMathjax e não executavam.
     rehypePlugins: [
       [
         rehypeMathjax,
         {
-          // Opções do MathJax TeX input:
-          // 'all' => numera TODO display-math (inclui $$...$$)
-          // 'ams' => segue as regras AMS (numera só certos ambientes)
           tex: {
             tags: 'all',
-            useLabelIds: true, // IDs de elemento baseados no \label
-            // tagSide: 'right', // mude para 'left' se quiser números à esquerda
+            useLabelIds: true,
           },
-          // Para SVG você normalmente não precisa configurar nada aqui.
-          // Se preferir CommonHTML (CHTML), use a alternativa no bloco abaixo.
         },
-        rehypeSlug,
-        rehypeWrapH2Sections,
       ],
+      rehypeSlug,
+      rehypeWrapH2Sections,
     ],
   },
 });
