@@ -35,9 +35,23 @@ const remarkWrapH2Slides: Plugin = () => {
     let current: Node[] = []
     const push = () => { if (current.length) { segments.push(current); current = [] } }
 
+    function isSlideBreak(n: Node): boolean {
+      // Our custom delimiter: paragraph whose plain text is exactly '---sldbrk'
+      if (n.type === 'paragraph' && Array.isArray(n.children) && n.children.length === 1) {
+        const c = n.children[0]
+        if (c.type === 'text' && c.value && c.value.trim() === '---sldbrk') return true
+      }
+      return false
+    }
+
     for (const n of kids) {
-      if (n.type === 'heading' && n.depth === 2) {
+      if ((n.type === 'heading' && n.depth === 2) || isSlideBreak(n)) {
+        // finalize previous
         push()
+        if (isSlideBreak(n)) {
+          // explicit break marker is discarded (not included in any segment)
+          continue
+        }
         current.push(n)
       } else {
         current.push(n)
@@ -47,10 +61,15 @@ const remarkWrapH2Slides: Plugin = () => {
 
     // Generate mdxJsxFlowElement nodes
     const out: Node[] = []
+    const used = new Set<string>()
     segments.forEach((seg, idx) => {
       let heading = seg.find(n => n.type === 'heading' && (n.depth === 2 || n.depth === 1))
       let text = heading ? toString(heading).trim() : (idx === 0 ? 'introducao' : `slide-${idx+1}`)
-      const id = slugify(text) || `slide-${idx+1}`
+      let base = slugify(text) || `slide-${idx+1}`
+      let id = base
+      let counter = 2
+      while (used.has(id)) { id = `${base}-${counter++}` }
+      used.add(id)
       out.push({
         type: 'mdxJsxFlowElement',
         name: 'Slide',

@@ -27,6 +27,24 @@ export default function SlideDeck({ children }: { children: ReactNode }) {
     // título = primeiro h1
     const h1 = root.querySelector('h1')
     if (h1) setTitle(h1.textContent?.trim() || '')
+    // Intro slide styling (only once)
+    if (sections.length && !sections[0].dataset.introProcessed) {
+      const first = sections[0]
+      const firstH1 = first.querySelector('h1')
+      if (firstH1) {
+        first.classList.add('intro-slide','flex','flex-col','items-center','justify-center','min-h-[60vh]','text-center')
+        firstH1.classList.add('text-5xl','sm:text-6xl','font-bold','text-center','mb-6')
+        // Wrap remaining non-h1 direct children into a subtitle wrapper for consistent layout
+        const rest = Array.from(first.children).filter(c => c !== firstH1)
+        if (rest.length) {
+          const wrapper = document.createElement('div')
+            ;(wrapper.className = 'mt-2 text-xl text-center leading-relaxed space-y-4 max-w-3xl')
+          rest.forEach(node => wrapper.appendChild(node))
+          first.appendChild(wrapper)
+        }
+        first.dataset.introProcessed = 'true'
+      }
+    }
     // hash inicial
     const hash = window.location.hash.replace(/^#/, '')
     if (hash) {
