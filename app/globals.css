@@ -272,28 +272,6 @@ mjx-container:not([display="true"]) {
 /* Neutralize Slide wrapper in text mode so layout matches pre-segmentation */
 .prose:not(.prose-presentation) > section[data-id] { display: contents; }
 
-/* Intro slide styling (presentation mode only) */
-.presentation-deck section[data-intro] {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 60vh;
-  text-align: center;
-}
-.presentation-deck section[data-intro] h1 {
-  font-size: clamp(3rem, 8vw, 5.5rem);
-  line-height: 1.05;
-  font-weight: 700;
-  margin-bottom: 1.25rem;
-}
-.presentation-deck section[data-intro] > *:not(h1) {
-  max-width: 56rem;
-  font-size: 1.25rem;
-  line-height: 1.35;
-  opacity: 0.92;
-}
-
 @media (min-width: 1024px) {
   .presentation-deck .prose-presentation { font-size: 1.15rem; }
   .presentation-deck .prose-presentation p { font-size: 1.1em; }
