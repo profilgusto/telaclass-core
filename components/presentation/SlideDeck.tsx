@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { useSwipeable } from 'react-swipeable'
 import { useViewMode } from './useViewMode'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import type { ReactNode } from 'react'
@@ -16,8 +15,6 @@ export default function SlideDeck({ children }: { children: ReactNode }) {
   const [index, setIndex] = useState(0)
   const [ids, setIds] = useState<string[]>([])
   const [title, setTitle] = useState('')
-  // Flag para detectar gestos multi-toque (pinch) e ignorar swipes durante eles
-  const multiTouchRef = useRef(false)
 
   // Coleta de slides (sem mutar DOM)
   useEffect(() => {
@@ -84,22 +81,63 @@ export default function SlideDeck({ children }: { children: ReactNode }) {
     }
   }, [index, mode])
 
-  // swipe
-  const bind = useSwipeable({
-    onSwipedLeft: (e) => {
-      if (multiTouchRef.current) return
-      setIndex((i) => Math.min(i + 1, Math.max(0, ids.length - 1)))
-    },
-    onSwipedRight: (e) => {
-      if (multiTouchRef.current) return
-      setIndex((i) => Math.max(i - 1, 0))
-    },
-    onSwiping: () => {
-      // se multi-toque ativo, não navega
-      if (multiTouchRef.current) return false as any
-    },
-    trackMouse: true,
-  })
+  // Custom three-finger horizontal swipe detection
+  useEffect(() => {
+    if (mode !== 'apresentacao') return
+    const el = containerRef.current?.parentElement // wrapper div inside deck
+    if (!el) return
+
+    let startX = 0
+    let startY = 0
+    let active = false
+    let moved = false
+
+    function onTouchStart(e: TouchEvent) {
+      if (e.touches.length === 3) {
+        const t = e.touches[0]
+        startX = t.clientX
+        startY = t.clientY
+        active = true
+        moved = false
+      } else {
+        active = false
+      }
+    }
+    function onTouchMove(e: TouchEvent) {
+      if (!active) return
+      if (e.touches.length !== 3) { active = false; return }
+      const t = e.touches[0]
+      const dx = t.clientX - startX
+      const dy = t.clientY - startY
+      // ignore mostly vertical
+      if (Math.abs(dx) > 30 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+        moved = true
+      }
+    }
+    function onTouchEnd(e: TouchEvent) {
+      if (!active) return
+      // After fingers lifted, decide navigation based on final delta
+      if (moved) {
+        const dx = (e.changedTouches[0]?.clientX || 0) - startX
+        if (dx < -30) {
+          setIndex(i => Math.min(i + 1, Math.max(0, ids.length - 1)))
+        } else if (dx > 30) {
+          setIndex(i => Math.max(i - 1, 0))
+        }
+      }
+      active = false
+    }
+    el.addEventListener('touchstart', onTouchStart, { passive: true })
+    el.addEventListener('touchmove', onTouchMove, { passive: true })
+    el.addEventListener('touchend', onTouchEnd, { passive: true })
+    el.addEventListener('touchcancel', onTouchEnd, { passive: true })
+    return () => {
+      el.removeEventListener('touchstart', onTouchStart)
+      el.removeEventListener('touchmove', onTouchMove)
+      el.removeEventListener('touchend', onTouchEnd)
+      el.removeEventListener('touchcancel', onTouchEnd)
+    }
+  }, [mode, ids.length])
 
   if (mode !== 'apresentacao') {
     // fluxo linear
@@ -107,13 +145,7 @@ export default function SlideDeck({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div
-      className="presentation-deck relative mx-auto w-full"
-      {...bind}
-      onTouchStart={(e) => { if (e.touches && e.touches.length > 1) multiTouchRef.current = true }}
-      onTouchEnd={(e) => { if (e.touches.length === 0) multiTouchRef.current = false }}
-      onTouchCancel={() => { multiTouchRef.current = false }}
-    >
+    <div className="presentation-deck relative mx-auto w-full">
       {/* Barra fixa de controles no topo */}
       <div
         className="sticky top-0 z-20 w-full border-b bg-[var(--bg)]/85 backdrop-blur supports-[backdrop-filter]:bg-[var(--bg)]/70 flex items-stretch gap-3 px-2 sm:px-3 h-6"
