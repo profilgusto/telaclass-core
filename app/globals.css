@@ -192,26 +192,27 @@ mjx-container:not([display="true"]) {
 .presentation-deck .prose-presentation {
   /* Slightly larger base font */
   font-size: 1.1rem;
-  line-height: 1.55;
+  line-height: 3rem;
 }
 
 /* Headings scale up */
 .presentation-deck .prose-presentation h1 {
-  font-size: clamp(2.25rem, 4vw + 1rem, 3.25rem);
+  font-size:5rem;
   line-height: 1.1;
 }
 .presentation-deck .prose-presentation h2 {
-  font-size: clamp(1.9rem, 2.8vw + 0.75rem, 2.5rem);
+  /*font-size: clamp(1.9rem, 2.8vw + 0.75rem, 2.5rem); */
+  font-size: 4rem;
   line-height: 1.15;
   margin-top: 0.25rem; /* closer to top bar */
-  margin-bottom: 0.9rem;
+  margin-bottom: 2rem;
 }
 
 /* Paragraph spacing tighter vertically (more content per slide) */
 .presentation-deck .prose-presentation p {
-  margin-top: 0.5rem;
-  margin-bottom: 0.9rem;
-  font-size: 1.08em; /* relative bump */
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  font-size: 20pt; /* relative bump */
 }
 
 /* Lists slightly larger with tighter spacing */
@@ -239,15 +240,29 @@ mjx-container:not([display="true"]) {
 }
 
 /* Slide sections: reduce internal horizontal padding (Tailwind classes already set, this is a fine-tune) */
+/* Horizontal sizing variables (tweak these for lateral spacing) */
+.presentation-deck {
+  --slide-x-gap: clamp(0.75rem, 1.5vw, 1.25rem); /* outer margin from viewport */
+  --slide-x-pad: clamp(0.5rem, 1.2vw, 1rem);     /* inner padding inside slide */
+  --slide-max-w: 90rem; /* increase from 64rem (4xl) to allow wider content; adjust as needed */
+}
+
 .presentation-deck section[data-id] {
-  padding-left: clamp(0.75rem, 2vw, 1.25rem);
-  padding-right: clamp(0.75rem, 2vw, 1.25rem);
+  /* Remove centering (mx-auto) and control spacing manually */
+  max-width: var(--slide-max-w);
+  margin-left: var(--slide-x-gap);
+  margin-right: var(--slide-x-gap);
+  padding-left: var(--slide-x-pad);
+  padding-right: var(--slide-x-pad);
 }
 
 /* Intro slide keep its larger layout but respect horizontal tightening */
 .presentation-deck .intro-slide {
-  padding-left: clamp(0.75rem, 2vw, 1.25rem) !important;
-  padding-right: clamp(0.75rem, 2vw, 1.25rem) !important;
+  padding-left: var(--slide-x-pad) !important;
+  padding-right: var(--slide-x-pad) !important;
+  margin-left: var(--slide-x-gap) !important;
+  margin-right: var(--slide-x-gap) !important;
+  max-width: var(--slide-max-w) !important;
 }
 
 /* Make sure figures adapt */
