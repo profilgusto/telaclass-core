@@ -16,6 +16,8 @@ export default function SlideDeck({ children }: { children: ReactNode }) {
   const [index, setIndex] = useState(0)
   const [ids, setIds] = useState<string[]>([])
   const [title, setTitle] = useState('')
+  // Flag para detectar gestos multi-toque (pinch) e ignorar swipes durante eles
+  const multiTouchRef = useRef(false)
 
   // Coleta de slides (sem mutar DOM)
   useEffect(() => {
@@ -84,8 +86,18 @@ export default function SlideDeck({ children }: { children: ReactNode }) {
 
   // swipe
   const bind = useSwipeable({
-    onSwipedLeft: () => setIndex((i) => Math.min(i + 1, Math.max(0, ids.length - 1))),
-    onSwipedRight: () => setIndex((i) => Math.max(i - 1, 0)),
+    onSwipedLeft: (e) => {
+      if (multiTouchRef.current) return
+      setIndex((i) => Math.min(i + 1, Math.max(0, ids.length - 1)))
+    },
+    onSwipedRight: (e) => {
+      if (multiTouchRef.current) return
+      setIndex((i) => Math.max(i - 1, 0))
+    },
+    onSwiping: () => {
+      // se multi-toque ativo, não navega
+      if (multiTouchRef.current) return false as any
+    },
     trackMouse: true,
   })
 
@@ -95,7 +107,13 @@ export default function SlideDeck({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="presentation-deck relative mx-auto w-full" {...bind}>
+    <div
+      className="presentation-deck relative mx-auto w-full"
+      {...bind}
+      onTouchStart={(e) => { if (e.touches && e.touches.length > 1) multiTouchRef.current = true }}
+      onTouchEnd={(e) => { if (e.touches.length === 0) multiTouchRef.current = false }}
+      onTouchCancel={() => { multiTouchRef.current = false }}
+    >
       {/* Barra fixa de controles no topo */}
       <div
         className="sticky top-0 z-20 w-full border-b bg-[var(--bg)]/85 backdrop-blur supports-[backdrop-filter]:bg-[var(--bg)]/70 flex items-stretch gap-3 px-2 sm:px-3 h-6"
