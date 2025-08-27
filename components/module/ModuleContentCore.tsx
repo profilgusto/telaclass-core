@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { MDXProvider } from '@mdx-js/react'
 import { MDX_MANIFEST } from '@/content/mdx-manifest'
 import { useMdxOverrides } from './mdxOverrides'
+import { ViewModeProvider } from '@/components/presentation/useViewMode'
 
 export type ModuleContentMode = 'texto' | 'apresentacao'
 
@@ -48,16 +49,18 @@ export function ModuleContentCore({ manifestKey, slug, mod, mode, wrapWithSlideD
   }
 
   const content = (
-    <MDXProvider components={components}>
-      <div
-        className={[
-          'prose max-w-none',
-          mode === 'apresentacao' && 'prose-presentation'
-        ].filter(Boolean).join(' ')}
-      >
-        <MDX components={components} />
-      </div>
-    </MDXProvider>
+    <ViewModeProvider mode={mode}>
+      <MDXProvider components={components}>
+        <div
+          className={[
+            'prose max-w-none',
+            mode === 'apresentacao' && 'prose-presentation'
+          ].filter(Boolean).join(' ')}
+        >
+          <MDX components={components} />
+        </div>
+      </MDXProvider>
+    </ViewModeProvider>
   )
 
   return wrapWithSlideDeck ? wrapWithSlideDeck(content) : content

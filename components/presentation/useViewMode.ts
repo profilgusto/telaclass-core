@@ -1,6 +1,6 @@
 // components/presentation/useViewMode.ts
 'use client'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState, createContext, useContext, ReactNode } from 'react'
 
 export type ViewMode = 'texto' | 'apresentacao'
 
@@ -14,27 +14,28 @@ function readModeFromEnv(): ViewMode {
   }
 }
 
-export function useViewMode(): ViewMode {
-  // Inicia sempre com 'texto' tanto no servidor quanto no cliente para evitar
-  // divergência de HTML durante a hidratação. Depois sincroniza.
-  const [mode, setMode] = useState<ViewMode>('texto')
+// Contexto opcional para sobrescrever o modo vindo de cima (evita flash).
+const ViewModeOverrideContext = createContext<ViewMode | null>(null)
 
-  // Sincroniza na montagem e em eventos customizados.
+export function useViewMode(): ViewMode {
+  const override = useContext(ViewModeOverrideContext)
+  if (override) return override
+  // Fallback: comportamento dinâmico global.
+  const [mode, setMode] = useState<ViewMode>('texto')
   useEffect(() => {
     const sync = () => setMode(readModeFromEnv())
-    sync() // primeira leitura real (montagem)
+    sync()
     window.addEventListener('telaclass:view-mode', sync as any)
-    return () => {
-      window.removeEventListener('telaclass:view-mode', sync as any)
-    }
+    return () => window.removeEventListener('telaclass:view-mode', sync as any)
   }, [])
-
-  // Persistência sempre que mudar.
   useEffect(() => {
     try { localStorage.setItem('view-mode', mode) } catch {}
   }, [mode])
-
   return mode
+}
+
+export function ViewModeProvider({ mode, children }: { mode: ViewMode; children: ReactNode }) {
+  return React.createElement(ViewModeOverrideContext.Provider, { value: mode }, children)
 }
 
 export function setViewMode(next: ViewMode) {

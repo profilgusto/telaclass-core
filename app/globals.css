@@ -269,6 +269,9 @@ mjx-container:not([display="true"]) {
 .presentation-deck .prose-presentation figure { margin: 1rem auto; }
 .presentation-deck .prose-presentation figcaption { font-size: 0.8em; }
 
+/* Neutralize Slide wrapper in text mode so layout matches pre-segmentation */
+.prose:not(.prose-presentation) > section[data-id] { display: contents; }
+
 @media (min-width: 1024px) {
   .presentation-deck .prose-presentation { font-size: 1.15rem; }
   .presentation-deck .prose-presentation p { font-size: 1.1em; }
