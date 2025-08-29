@@ -1,6 +1,7 @@
 "use client"
 import React, { useMemo, cloneElement } from 'react'
 import Slide from '@/components/presentation/Slide'
+import YouTube from '@/components/YouTube'
 import { PresentOnly, TextOnly } from '@/components/presentation/Only'
 import { useViewMode } from '@/components/presentation/useViewMode'
 
@@ -103,7 +104,8 @@ export function useMdxOverrides({ slug, mod }: OverrideDeps) {
       Slide,
       PresentOnly,
       TextOnly,
-      ...MediaResolvers
+  ...MediaResolvers,
+  YouTube
     }
   }, [Paragraph, Img, A, MediaResolvers])
 

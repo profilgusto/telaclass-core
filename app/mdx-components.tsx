@@ -4,6 +4,7 @@ import Link from 'next/link';
 import type { ComponentPropsWithoutRef } from 'react';
 import type { MDXComponents } from 'mdx/types';
 import CodeBlock from '@/components/code-block';
+import YouTube from '@/components/YouTube';
 
 // Helper: external link?
 const isExternal = (href?: string) =>
@@ -127,7 +128,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       return <audio {...rest} className={merged} />;
     },
 
-    // Video: responsive, centered, constrained width
+  // Video: responsive, centered, constrained width
     video: (p: any) => {
       const { className, ...rest } = p;
       const merged = [
@@ -136,6 +137,9 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       ].filter(Boolean).join(' ');
       return <video {...rest} className={merged} />;
     },
+
+  // Custom YouTube embed shortcut <YouTube url="..." />
+  YouTube,
 
 
     // Preserve user-provided overrides last

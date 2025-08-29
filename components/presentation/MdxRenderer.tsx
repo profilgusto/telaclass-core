@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo, cloneElement } from 'react'
 import { MDXProvider } from '@mdx-js/react'
 import SlideDeck from '@/components/presentation/SlideDeck'
 import Slide from '@/components/presentation/Slide'
+import YouTube from '@/components/YouTube'
 import { PresentOnly, TextOnly } from '@/components/presentation/Only'
 import { MDX_MANIFEST } from '@/content/mdx-manifest'
 
@@ -143,6 +144,7 @@ export default function MdxRenderer({ manifestKey, slug, mod }: Props) {
       Slide,
       PresentOnly,
       TextOnly,
+  YouTube,
       ...MediaResolvers
     }),
     [Img, A, MediaResolvers]
