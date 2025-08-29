@@ -17,6 +17,8 @@ export function Header() {
   const [open, setOpen] = useState(false);          // controla o Drawer
   const [courseSlug, setCourseSlug] = useReactState<string | null>(null);
   const [courseData, setCourseData] = useReactState<any>(null);
+  const [moduleHeadings, setModuleHeadings] = useReactState<Array<{ id: string; text: string }>>([])
+  const [currentHeadingId, setCurrentHeadingId] = useReactState<string | null>(null)
 
   const links = [
     { href: '/disciplinas', label: 'Disciplinas' },
@@ -39,6 +41,26 @@ export function Header() {
       .then(data => setCourseData(data))
       .catch(() => setCourseData(null));
   }, [courseSlug]);
+
+  // Fetch headings for current module (mobile sidebar) when in module page
+  useEffect(() => {
+    if (!(isModulePage && courseSlug)) { setModuleHeadings([]); return }
+    const modPath = parts[2]
+    if (!modPath) { setModuleHeadings([]); return }
+    fetch(`/api/module-headings?slug=${encodeURIComponent(courseSlug)}&mod=${encodeURIComponent(modPath)}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => setModuleHeadings(data?.headings || []))
+      .catch(() => setModuleHeadings([]))
+  }, [isModulePage, courseSlug, pathname])
+
+  // Track current heading via hash (basic highlight). No scroll spy in drawer.
+  useEffect(() => {
+    if (!isModulePage) { setCurrentHeadingId(null); return }
+    const sync = () => setCurrentHeadingId(decodeURIComponent(window.location.hash.replace(/^#/, '')) || null)
+    sync()
+    window.addEventListener('hashchange', sync)
+    return () => window.removeEventListener('hashchange', sync)
+  }, [isModulePage, pathname])
 
   return (
     <header
@@ -97,8 +119,14 @@ export function Header() {
             {isModulePage && courseData && (
               <div className='border-t pt-4'>
                 <p className='mb-2 font-medium text-xs uppercase tracking-wide text-muted-foreground'>Módulos</p>
-                {/* Reuso direto do componente de sidebar */}
-                <CourseSidebar course={courseData} slug={courseSlug as string} />
+                {/* Reuso direto do componente de sidebar com headings do módulo atual */}
+                <CourseSidebar 
+                  course={courseData} 
+                  slug={courseSlug as string} 
+                  currentModulePath={parts[2]}
+                  headings={moduleHeadings}
+                  currentHeadingId={currentHeadingId}
+                />
               </div>
             )}
           </div>
