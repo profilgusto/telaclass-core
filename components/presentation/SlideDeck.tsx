@@ -79,6 +79,12 @@ export default function SlideDeck({ children }: { children: ReactNode }) {
       url.hash = id
       window.history.replaceState({}, '', url.toString())
     }
+    // Sempre rolar para o topo ao trocar de slide (evita ficar "no meio" após navegação)
+    try {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    } catch {
+      window.scrollTo(0, 0)
+    }
   }, [index, mode])
 
   // Custom three-finger horizontal swipe detection
