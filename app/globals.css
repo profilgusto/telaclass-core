@@ -217,6 +217,20 @@ mjx-container:not([display="true"]) {
   margin-top: 0.25rem; /* closer to top bar */
   margin-bottom: 2rem;
 }
+.presentation-deck .prose-presentation h3 {
+  /*font-size: clamp(1.9rem, 2.8vw + 0.75rem, 2.5rem); */
+  font-size: 3rem;
+  line-height: 1;
+  margin-top: 0.25rem; /* closer to top bar */
+  margin-bottom: 2rem;
+}
+.presentation-deck .prose-presentation h4 {
+  /*font-size: clamp(1.9rem, 2.8vw + 0.75rem, 2.5rem); */
+  font-size: 2rem;
+  line-height: 1;
+  margin-top: 0.25rem; /* closer to top bar */
+  margin-bottom: 2rem;
+}
 
 /* Paragraph spacing tighter vertically (more content per slide) */
 .presentation-deck .prose-presentation p {
