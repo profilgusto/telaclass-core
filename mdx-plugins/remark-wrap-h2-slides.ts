@@ -1,7 +1,8 @@
 // remark-wrap-h2-slides.ts
+// (Agora também quebra em h3)
 // Split the top-level flow into <Slide data-id="..."> segments:
-// 1. Intro segment: any nodes before the first level-2 heading (h2)
-// 2. Each h2 + following nodes until the next h2
+// 1. Intro segment: any nodes before the first level-2/3 heading (h2/h3)
+// 2. Each h2 OR h3 + following nodes until the next h2/h3 (or explicit marker)
 // Produces mdxJsxFlowElement nodes named "Slide" so runtime Slide component
 // can control styling (only in presentation mode) and SlideDeck can paginate.
 import type { Plugin } from 'unified'
@@ -26,9 +27,9 @@ const remarkWrapH2Slides: Plugin = () => {
     const kids = root.children || []
     if (!kids.length) return
 
-    // Quick scan: does it even have an h2? If not, do nothing (single flow).
-    const hasH2 = kids.some(n => n.type === 'heading' && n.depth === 2)
-    if (!hasH2) return
+  // Quick scan: does it even have an h2 or h3? If not, do nothing (single flow).
+  const hasBreakHeading = kids.some(n => n.type === 'heading' && (n.depth === 2 || n.depth === 3))
+  if (!hasBreakHeading) return
 
     // Build segments
     const segments: Node[][] = []
@@ -45,7 +46,7 @@ const remarkWrapH2Slides: Plugin = () => {
     }
 
     for (const n of kids) {
-      if ((n.type === 'heading' && n.depth === 2) || isSlideBreak(n)) {
+      if ((n.type === 'heading' && (n.depth === 2 || n.depth === 3)) || isSlideBreak(n)) {
         // finalize previous
         push()
         if (isSlideBreak(n)) {
@@ -63,7 +64,10 @@ const remarkWrapH2Slides: Plugin = () => {
     const out: Node[] = []
     const used = new Set<string>()
     segments.forEach((seg, idx) => {
-      let heading = seg.find(n => n.type === 'heading' && (n.depth === 2 || n.depth === 1))
+      // Prefer h2, then h1, then h3 for id generation (so nested subsections get stable ids)
+      let heading = seg.find(n => n.type === 'heading' && n.depth === 2)
+        || seg.find(n => n.type === 'heading' && n.depth === 1)
+        || seg.find(n => n.type === 'heading' && n.depth === 3)
       let text = heading ? toString(heading).trim() : (idx === 0 ? 'introducao' : `slide-${idx+1}`)
       let base = slugify(text) || `slide-${idx+1}`
       let id = base
