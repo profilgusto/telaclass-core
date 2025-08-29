@@ -118,8 +118,6 @@ export function Header() {
             </nav>
             {isModulePage && courseData && (
               <div className='border-t pt-4'>
-                <p className='mb-2 font-medium text-xs uppercase tracking-wide text-muted-foreground'>Módulos</p>
-                {/* Reuso direto do componente de sidebar com headings do módulo atual */}
                 <CourseSidebar 
                   course={courseData} 
                   slug={courseSlug as string} 

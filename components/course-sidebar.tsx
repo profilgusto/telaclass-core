@@ -23,7 +23,10 @@ export function CourseSidebar({
     const normalize = (s: string) => s.replace(/^\/+|\/+$/g, '');
 
     return (
-        <nav className="p-[var(--space-md)] space-y-[var(--space-xs)] text-sm overflow-y-auto overscroll-contain h-full">
+        <nav className="p-[var(--space-md)] space-y-[var(--space-xs)] text-sm overflow-y-auto overscroll-contain h-full" aria-label={`Navegação da disciplina ${course.title}`}>
+            <div className="mb-3">
+                <div className="text-base font-semibold leading-snug tracking-tight">{course.title}</div>
+            </div>
             {course.entries
                 .filter((e) => e.visible !== false)
                 .map((e: CourseEntry) => {
