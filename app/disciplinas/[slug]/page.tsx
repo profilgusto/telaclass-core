@@ -54,11 +54,12 @@ export default async function DisciplinaHome({
               href={`/disciplinas/${slug}/${m.path}`}
               className={clsx(
                 buttonVariants({ variant: 'outline', size: 'lg' }),
-                'justify-start h-auto py-4 flex flex-col items-start space-y-1 text-left'
+                // Override base button whitespace-nowrap (use ! to ensure precedence)
+                'justify-start h-auto py-4 flex flex-col items-start space-y-1 text-left !whitespace-normal break-words'
               )}
             >
               <span className="text-xs uppercase tracking-wide opacity-60">{m.number ? `Módulo ${m.number}` : 'Módulo'}</span>
-              <span className="font-medium leading-snug line-clamp-2">{m.title}</span>
+              <span className="font-medium leading-snug line-clamp-2 break-words whitespace-normal">{m.title}</span>
             </Link>
           ))}
         </div>
