@@ -91,14 +91,28 @@ export function useMdxOverrides({ slug, mod }: OverrideDeps) {
       const mode = useViewMode()
       return (
         <>
-          {mode === 'texto' && <hr className="mt-16 mb-0 border-t border-border" />}
+          {mode === 'texto' && (
+            <>
+              <hr className="mt-16 mb-0 border-t border-border" />
+              <hr className="mt-1 mb-0 border-t border-border" />
+            </>
+          )}
           <h2 className={['text-2xl','font-semibold','mt-2','mb-4', p.className].filter(Boolean).join(' ')} {...p} />
         </>
       )
     }
+    const H4 = (p: any) => {
+      const mode = useViewMode()
+      // In text mode style identical to h3 request; in presentation we keep a slight size drop
+      const base = mode === 'texto'
+        ? ['text-xl','font-semibold','mt-4','mb-2']
+        : ['text-lg','font-semibold','mt-4','mb-2']
+      return <h4 className={[...base, p.className].filter(Boolean).join(' ')} {...p} />
+    }
     return {
       p: Paragraph,
       h2: H2,
+      h4: H4,
       img: Img,
       a: A,
       Slide,

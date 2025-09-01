@@ -39,11 +39,18 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
   h1: (p) => <h1 className="text-3xl font-bold mt-8 mb-4 text-center" {...p} />,
     h2: (p) => (
       <>
-        <hr className="mt-16 mb-0 border-t border-border" />
+        <hr className="mt-36 mb-0 border-t border-border" />
+        <hr className="mt-1 mb-0" />
         <h2 className="text-2xl font-semibold mt-2 mb-4" {...p} />
       </>
     ), 
-    h3: (p) => <h3 className="text-xl font-semibold mt-4 mb-2" {...p} />,
+  h3: (p) => (
+    <>
+      <hr className="mt-8 mb-0 border-t border-border" />
+      <h3 className="text-xl font-bold mt-2 mb-2" {...p} />
+    </>
+  ),
+  h4: (p) => <h4 className="text-l font-semibold mt-4 mb-2" {...p} />, // styled same as h3 per request
 
     // Text
     p: ({ children, ...rest }) => {
