@@ -39,14 +39,14 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
   h1: (p) => <h1 className="text-3xl font-bold mt-8 mb-4 text-center" {...p} />,
     h2: (p) => (
       <>
-        <hr className="mt-36 mb-0 border-t border-border" />
-        <hr className="mt-1 mb-0" />
+        <hr className="heading-separator mt-36 mb-0 border-t border-border" />
+        <hr className="heading-separator mt-1 mb-0 border-t border-border" />
         <h2 className="text-2xl font-semibold mt-2 mb-4" {...p} />
       </>
     ), 
   h3: (p) => (
     <>
-      <hr className="mt-8 mb-0 border-t border-border" />
+      <hr className="heading-separator mt-8 mb-0 border-t border-border" />
       <h3 className="text-xl font-bold mt-2 mb-2" {...p} />
     </>
   ),

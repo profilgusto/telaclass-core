@@ -232,6 +232,9 @@ mjx-container:not([display="true"]) {
   margin-bottom: 2rem;
 }
 
+/* Hide heading separator rules in presentation mode (only for slide view) */
+.presentation-deck .prose-presentation .heading-separator { display: none !important; }
+
 /* Paragraph spacing tighter vertically (more content per slide) */
 .presentation-deck .prose-presentation p {
   margin-top: 1rem;
