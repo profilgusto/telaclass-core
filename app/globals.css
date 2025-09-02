@@ -188,6 +188,7 @@ mjx-container:not([display="true"]) {
   .print-hide { display: none !important; }
 }
 
+
 /* =============================
    Presentation mode overrides
    -----------------------------
@@ -204,7 +205,7 @@ mjx-container:not([display="true"]) {
   font-size: 1.15rem;
   line-height: 1.6;
   /* Escalable list sizing variables */
-  --list-base-size: clamp(1.05rem, 1.2vw + 0.5rem, 1.6rem);
+  --presentation-font-base-size: 3rem;
   --list-step: 0.9; /* multiplier per nesting level */
 }
 
@@ -215,21 +216,21 @@ mjx-container:not([display="true"]) {
 }
 .presentation-deck .prose-presentation h2 {
   /*font-size: clamp(1.9rem, 2.8vw + 0.75rem, 2.5rem); */
-  font-size: 4rem;
+  font-size: calc(var(--presentation-font-base-size)*1.8);
   line-height: 1.15;
   margin-top: 0.1rem; /* closer to top bar */
   margin-bottom: 2rem;
 }
 .presentation-deck .prose-presentation h3 {
   /*font-size: clamp(1.9rem, 2.8vw + 0.75rem, 2.5rem); */
-  font-size: 3rem;
+  font-size: calc(var(--presentation-font-base-size)*1.6);
   line-height: 1;
   margin-top: 0.1rem; /* closer to top bar */
   margin-bottom: 2rem;
 }
 .presentation-deck .prose-presentation h4 {
   /*font-size: clamp(1.9rem, 2.8vw + 0.75rem, 2.5rem); */
-  font-size: 2rem;
+  font-size: calc(var(--presentation-font-base-size)*1.4);
   line-height: 1;
   margin-top: 0.1rem; /* closer to top bar */
   margin-bottom: 2rem;
@@ -242,7 +243,7 @@ mjx-container:not([display="true"]) {
 .presentation-deck .prose-presentation p {
   margin-top: 0.9rem;
   margin-bottom: 0.9rem;
-  font-size: 3rem !important; /* ensure override if typography plugin sets base */
+  font-size: var(--presentation-font-base-size) !important; /* ensure override if typography plugin sets base */
   line-height: 1.45;
 }
 
@@ -252,14 +253,14 @@ mjx-container:not([display="true"]) {
   padding-left: 1.05em;
   margin-top: 0.4rem;
   margin-bottom: 0.9rem;
-  font-size: var(--list-base-size);
+  font-size: var(--presentation-font-base-size);
 }
 /* depth 2 */
 .presentation-deck .prose-presentation ul ul,
 .presentation-deck .prose-presentation ol ul,
 .presentation-deck .prose-presentation ul ol,
 .presentation-deck .prose-presentation ol ol {
-  font-size: calc(var(--list-base-size) * var(--list-step));
+  font-size: calc(var(--presentation-font-base-size) * var(--list-step));
 }
 /* depth 3 */
 .presentation-deck .prose-presentation ul ul ul,
@@ -270,7 +271,7 @@ mjx-container:not([display="true"]) {
 .presentation-deck .prose-presentation ol ul ol,
 .presentation-deck .prose-presentation ul ol ol,
 .presentation-deck .prose-presentation ol ol ol {
-  font-size: calc(var(--list-base-size) * var(--list-step) * var(--list-step));
+  font-size: calc(var(--presentation-font-base-size) * var(--list-step) * var(--list-step));
 }
 /* depth 4 */
 .presentation-deck .prose-presentation ul ul ul ul,
@@ -289,7 +290,7 @@ mjx-container:not([display="true"]) {
 .presentation-deck .prose-presentation ol ul ol ol,
 .presentation-deck .prose-presentation ul ol ol ol,
 .presentation-deck .prose-presentation ol ol ol ol {
-  font-size: calc(var(--list-base-size) * var(--list-step) * var(--list-step) * var(--list-step));
+  font-size: calc(var(--presentation-font-base-size) * var(--list-step) * var(--list-step) * var(--list-step));
 }
 /* spacing between consecutive list items */
 .presentation-deck .prose-presentation li + li { margin-top: 0.35rem; }
@@ -313,26 +314,34 @@ mjx-container:not([display="true"]) {
 /* Horizontal sizing variables (tweak these for lateral spacing) */
 .presentation-deck {
   --slide-x-gap: clamp(0.75rem, 1.5vw, 1.25rem); /* outer margin from viewport */
-  --slide-x-pad: clamp(0.5rem, 1.2vw, 1rem);     /* inner padding inside slide */
+  --slide-x-pad: 50px;     /* inner padding inside slide */
   --slide-max-w: 90rem; /* increase from 64rem (4xl) to allow wider content; adjust as needed */
 }
 
+/* Full-width slides: occupy entire viewport width (edge to edge) */
 .presentation-deck section[data-id] {
-  /* Remove centering (mx-auto) and control spacing manually */
-  max-width: var(--slide-max-w);
-  margin-left: var(--slide-x-gap);
-  margin-right: var(--slide-x-gap);
+  /* Remove previous max-width & outer gaps */
+  max-width: none;
+  width: 100vw; /* ensure escapes parent width constraints */
+  margin-left: 50%;
+  margin-right: 50%;
+  transform: translateX(-50%); /* center the 100vw element inside flow without horizontal scroll */
   padding-left: var(--slide-x-pad);
   padding-right: var(--slide-x-pad);
+  border-radius: 0; /* neutralize any inherited radius (if any) */
 }
 
 /* Intro slide keep its larger layout but respect horizontal tightening */
+/* Intro slide also full-width */
 .presentation-deck .intro-slide {
   padding-left: var(--slide-x-pad) !important;
   padding-right: var(--slide-x-pad) !important;
-  margin-left: var(--slide-x-gap) !important;
-  margin-right: var(--slide-x-gap) !important;
-  max-width: var(--slide-max-w) !important;
+  margin-left: 50% !important;
+  margin-right: 50% !important;
+  transform: translateX(-50%);
+  max-width: none !important;
+  width: 100vw !important;
+  border-radius: 0 !important;
 }
 
 /* Make sure figures adapt */
