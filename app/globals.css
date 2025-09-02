@@ -200,9 +200,12 @@ mjx-container:not([display="true"]) {
    - H2 closer to the top bar (less top margin)
 ============================== */
 .presentation-deck .prose-presentation {
-  /* Slightly larger base font */
-  font-size: 1.1rem;
-  line-height: 3rem;
+  /* Base font size for slide content (kept moderately larger than text mode) */
+  font-size: 1.15rem;
+  line-height: 1.6;
+  /* Escalable list sizing variables */
+  --list-base-size: clamp(1.05rem, 1.2vw + 0.5rem, 1.6rem);
+  --list-step: 0.9; /* multiplier per nesting level */
 }
 
 /* Headings scale up */
@@ -237,22 +240,62 @@ mjx-container:not([display="true"]) {
 
 /* Paragraph spacing tighter vertically (more content per slide) */
 .presentation-deck .prose-presentation p {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  font-size: 20pt; /* relative bump */
+  margin-top: 0.9rem;
+  margin-bottom: 0.9rem;
+  font-size: 3rem !important; /* ensure override if typography plugin sets base */
+  line-height: 1.45;
 }
 
-/* Lists slightly larger with tighter spacing */
+/* Lists scalable by nesting depth (presentation mode) */
 .presentation-deck .prose-presentation ul,
 .presentation-deck .prose-presentation ol {
   padding-left: 1.05em;
   margin-top: 0.4rem;
   margin-bottom: 0.9rem;
-  font-size: 1.05em;
+  font-size: var(--list-base-size);
 }
-.presentation-deck .prose-presentation li + li {
-  margin-top: 0.35rem;
+/* depth 2 */
+.presentation-deck .prose-presentation ul ul,
+.presentation-deck .prose-presentation ol ul,
+.presentation-deck .prose-presentation ul ol,
+.presentation-deck .prose-presentation ol ol {
+  font-size: calc(var(--list-base-size) * var(--list-step));
 }
+/* depth 3 */
+.presentation-deck .prose-presentation ul ul ul,
+.presentation-deck .prose-presentation ol ul ul,
+.presentation-deck .prose-presentation ul ol ul,
+.presentation-deck .prose-presentation ol ol ul,
+.presentation-deck .prose-presentation ul ul ol,
+.presentation-deck .prose-presentation ol ul ol,
+.presentation-deck .prose-presentation ul ol ol,
+.presentation-deck .prose-presentation ol ol ol {
+  font-size: calc(var(--list-base-size) * var(--list-step) * var(--list-step));
+}
+/* depth 4 */
+.presentation-deck .prose-presentation ul ul ul ul,
+.presentation-deck .prose-presentation ol ul ul ul,
+.presentation-deck .prose-presentation ul ol ul ul,
+.presentation-deck .prose-presentation ol ol ul ul,
+.presentation-deck .prose-presentation ul ul ol ul,
+.presentation-deck .prose-presentation ol ul ol ul,
+.presentation-deck .prose-presentation ul ol ol ul,
+.presentation-deck .prose-presentation ol ol ol ul,
+.presentation-deck .prose-presentation ul ul ul ol,
+.presentation-deck .prose-presentation ol ul ul ol,
+.presentation-deck .prose-presentation ul ol ul ol,
+.presentation-deck .prose-presentation ol ol ul ol,
+.presentation-deck .prose-presentation ul ul ol ol,
+.presentation-deck .prose-presentation ol ul ol ol,
+.presentation-deck .prose-presentation ul ol ol ol,
+.presentation-deck .prose-presentation ol ol ol ol {
+  font-size: calc(var(--list-base-size) * var(--list-step) * var(--list-step) * var(--list-step));
+}
+/* spacing between consecutive list items */
+.presentation-deck .prose-presentation li + li { margin-top: 0.35rem; }
+/* spacing before nested list inside an li */
+.presentation-deck .prose-presentation li > ul,
+.presentation-deck .prose-presentation li > ol { margin-top: 0.3rem; }
 
 /* Links: higher underline visibility for projection */
 .presentation-deck .prose-presentation a {
@@ -301,7 +344,7 @@ mjx-container:not([display="true"]) {
 
 @media (min-width: 1024px) {
   .presentation-deck .prose-presentation { font-size: 1.15rem; }
-  .presentation-deck .prose-presentation p { font-size: 1.1em; }
+  .presentation-deck .prose-presentation p { font-size: clamp(1.2rem, 1.3vw + 0.8rem, 1.85rem); }
 }
 
 /* =============================
