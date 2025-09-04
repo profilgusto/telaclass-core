@@ -163,6 +163,12 @@ mjx-container[display="true"] {
   margin: 1rem 0;
 }
 
+/* Presentation mode: harmonize display math size with base presentation font */
+.presentation-deck .prose-presentation mjx-container[display="true"] {
+  font-size: var(--presentation-font-base-size); /* same scale as paragraphs */
+  line-height: 1.15; /* a bit tighter for large symbols */
+}
+
 /* Inline */
 mjx-container:not([display="true"]) {
   display: inline-block !important;
