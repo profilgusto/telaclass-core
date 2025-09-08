@@ -16,8 +16,9 @@ export default async function ModulePage({
   const cleanMod = norm(mod);
 
   const course = await getCourse(cleanSlug);
+  // Aceita tanto módulos quanto atividades (compartilham mesma infra de renderização)
   const entry = course.entries.find(
-    (e) => norm(e.path) === cleanMod && e.type === 'module'
+    (e) => norm(e.path) === cleanMod && (e.type === 'module' || e.type === 'activity')
   );
   if (!entry) {
     notFound();
@@ -62,7 +63,7 @@ export async function generateStaticParams() {
 
       entries
         .filter(
-          (e) => e.type === 'module' && e.visible !== false && typeof e.path === 'string'
+          (e) => (e.type === 'module' || e.type === 'activity') && e.visible !== false && typeof e.path === 'string'
         )
         .forEach((e) => params.push({ slug, mod: e.path.replace(/^\/+/, '') }));
     } catch {

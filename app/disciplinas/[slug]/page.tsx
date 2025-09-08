@@ -10,9 +10,10 @@ export default async function DisciplinaHome({
 }) {
   const { slug } = await params;
   const course = await getCourse(slug);
-  const modules = course.entries.filter(
-    (e) => e.type === 'module' && e.visible !== false
-  );
+  // Separa módulos e atividades visíveis
+  const entries = course.entries.filter(e => e.visible !== false && (e.type === 'module' || e.type === 'activity'));
+  const modules = entries.filter(e => e.type === 'module');
+  const activities = entries.filter(e => e.type === 'activity');
 
   return (
     <main className="p-6 space-y-6">
@@ -40,29 +41,50 @@ export default async function DisciplinaHome({
         </div>
       </header>
 
-      <section className="space-y-3">
-        <h2 className="text-xl font-semibold">Módulos</h2>
-        {modules.length === 0 && (
-          <p className="text-sm text-muted-foreground">
-            Nenhum módulo visível cadastrado.
-          </p>
-        )}
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {modules.map((m) => (
-            <Link
-              key={m.id}
-              href={`/disciplinas/${slug}/${m.path}`}
-              className={clsx(
-                buttonVariants({ variant: 'outline', size: 'lg' }),
-                // Override base button whitespace-nowrap (use ! to ensure precedence)
-                'justify-start h-auto py-4 flex flex-col items-start space-y-1 text-left !whitespace-normal break-words'
-              )}
-            >
-              <span className="text-xs uppercase tracking-wide opacity-60">{m.number ? `Módulo ${m.number}` : 'Módulo'}</span>
-              <span className="font-medium leading-snug line-clamp-2 break-words whitespace-normal">{m.title}</span>
-            </Link>
-          ))}
+      <section className="space-y-6">
+        <div className="space-y-3">
+          <h2 className="text-xl font-semibold">Módulos</h2>
+          {modules.length === 0 && (
+            <p className="text-sm text-muted-foreground">
+              Nenhum módulo visível cadastrado.
+            </p>
+          )}
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {modules.map((m) => (
+              <Link
+                key={m.id}
+                href={`/disciplinas/${slug}/${m.path}`}
+                className={clsx(
+                  buttonVariants({ variant: 'outline', size: 'lg' }),
+                  'justify-start h-auto py-4 flex flex-col items-start space-y-1 text-left !whitespace-normal break-words'
+                )}
+              >
+                <span className="text-xs uppercase tracking-wide opacity-60">{m.number ? `Módulo ${m.number}` : 'Módulo'}</span>
+                <span className="font-medium leading-snug line-clamp-2 break-words whitespace-normal">{m.title}</span>
+              </Link>
+            ))}
+          </div>
         </div>
+        {activities.length > 0 && (
+          <div className="space-y-3">
+            <h2 className="text-xl font-semibold">Atividades</h2>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {activities.map(a => (
+                <Link
+                  key={a.id}
+                  href={`/disciplinas/${slug}/${a.path}`}
+                  className={clsx(
+                    buttonVariants({ variant: 'outline', size: 'lg' }),
+                    'justify-start h-auto py-4 flex flex-col items-start space-y-1 text-left !whitespace-normal break-words'
+                  )}
+                >
+                  <span className="text-xs uppercase tracking-wide opacity-60">Atividade</span>
+                  <span className="font-medium leading-snug line-clamp-2 break-words whitespace-normal">{a.title}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
     </main>
   );
