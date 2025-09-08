@@ -27,7 +27,7 @@ export function CourseSidebar({
         const activities = visible.filter(e => e.type === 'activity')
         return (
                 <nav className="p-[var(--space-md)] space-y-[var(--space-lg)] text-sm overflow-y-auto overscroll-contain h-full" aria-label={`Navegação da disciplina ${course.title}`}>
-                                    <div className="mb-1">
+                                    <div className="mb-4">
                                             <Link
                                                 href={`/disciplinas/${slug}`}
                                                 className="text-base font-semibold leading-snug tracking-tight hover:underline focus:outline-none focus:ring-2 focus:ring-ring rounded-sm"

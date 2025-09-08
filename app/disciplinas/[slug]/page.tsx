@@ -56,11 +56,13 @@ export default async function DisciplinaHome({
                 href={`/disciplinas/${slug}/${m.path}`}
                 className={clsx(
                   buttonVariants({ variant: 'outline', size: 'lg' }),
-                  'justify-start h-auto py-4 flex flex-col items-start space-y-1 text-left !whitespace-normal break-words'
+                  'justify-start h-auto py-4 flex flex-col items-start space-y-1 text-left !whitespace-normal break-words',
+                  // Força override das cores (o variant outline injeta dark:bg-input/30 etc.)
+                  '!bg-emerald-50 dark:!bg-emerald-950/30 !border-emerald-200 dark:!border-emerald-950/70 hover:!bg-emerald-100 dark:hover:!bg-emerald-950/50 transition-colors'
                 )}
               >
-                <span className="text-xs uppercase tracking-wide opacity-60">{m.number ? `Módulo ${m.number}` : 'Módulo'}</span>
-                <span className="font-medium leading-snug line-clamp-2 break-words whitespace-normal">{m.title}</span>
+                <span className="font-bold text-xs uppercase tracking-wide opacity-70 text-emerald-900 dark:text-emerald-200">{m.number ? `Módulo ${m.number}` : 'Módulo'}</span>
+                <span className="font-medium leading-snug line-clamp-2 break-words whitespace-normal text-emerald-950 dark:text-emerald-100">{m.title}</span>
               </Link>
             ))}
           </div>
@@ -75,11 +77,13 @@ export default async function DisciplinaHome({
                   href={`/disciplinas/${slug}/${a.path}`}
                   className={clsx(
                     buttonVariants({ variant: 'outline', size: 'lg' }),
-                    'justify-start h-auto py-4 flex flex-col items-start space-y-1 text-left !whitespace-normal break-words'
+                    'justify-start h-auto py-4 flex flex-col items-start space-y-1 text-left !whitespace-normal break-words',
+                    // Força override das cores (o variant outline injeta dark:bg-input/30 etc.)
+                    '!bg-indigo-50 dark:!bg-indigo-950/30 !border-indigo-200 dark:!border-indigo-950/70 hover:!bg-indigo-100 dark:hover:!bg-indigo-950/50 transition-colors'
                   )}
                 >
-                  <span className="text-xs uppercase tracking-wide opacity-60">Atividade</span>
-                  <span className="font-medium leading-snug line-clamp-2 break-words whitespace-normal">{a.title}</span>
+                  <span className="font-bold text-xs uppercase tracking-wide opacity-70 text-indigo-900 dark:text-indigo-200">Atividade</span>
+                  <span className="font-medium leading-snug line-clamp-2 break-words whitespace-normal text-indigo-950 dark:text-indigo-100">{a.title}</span>
                 </Link>
               ))}
             </div>
