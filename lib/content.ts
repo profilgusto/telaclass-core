@@ -13,7 +13,7 @@ export type CourseEntry = {
     type: 'module' | 'activity' | 'info' | string;
     /** Título visível no sidebar e cabeçalhos */
     title: string;
-  /** Slug / subpasta onde residem content.mdx e slides.mdx */
+  /** Slug / subpasta onde reside content.mdx */
     path: string;
     /** Flag de publicação; false oculta do menu e do SSG */
     visible?: boolean;
@@ -93,20 +93,17 @@ export async function listCourses(): Promise<{ slug: string; title: string; code
   return out;
 }
 
-/** Carrega conteúdo canônico (content.mdx) e opcionalmente slides.mdx (RSC-friendly: retorna string crua) **/
+/** Carrega conteúdo canônico (content.mdx) **/
 export async function getModule(
   courseSlug: string,
   entryPath: string
-): Promise<{ content?: string; slides?: string }> {
+): Promise<{ content?: string }> {
   const dir = path.join(base, courseSlug, entryPath);
   const files: string[] = (await fs.readdir(dir).catch(() => [])) as string[];
-  const out: { content?: string; slides?: string } = {};
+  const out: { content?: string } = {};
   const read = async (file: string) => fs.readFile(path.join(dir, file), 'utf8');
   if (files.includes('content.mdx')) {
     out.content = await read('content.mdx');
-  }
-  if (files.includes('slides.mdx')) {
-    out.slides = await read('slides.mdx');
   }
   return out;
 }
