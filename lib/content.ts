@@ -9,15 +9,21 @@ const base = path.join(process.cwd(), 'content/disciplinas');
 export type CourseEntry = {
     /** Chave única da entrada (pode ser numérica ou alfanumérica) */
     id: string;
-    /** Natureza do item: módulo de conteúdo, atividade, informação, etc. */
-    type: 'module' | 'activity' | 'info' | string;
+  /** Natureza do item. Tipos suportados:
+   *  - modulo-teorico (numerado)
+   *  - modulo-pratico (numerado)
+   *  - atividade-avaliativa (não numerado)
+   *  - recurso (não numerado)
+   *  (outros valores são aceitos mas não possuem tratamento especial)
+   */
+  type: 'modulo-teorico' | 'modulo-pratico' | 'atividade-avaliativa' | 'recurso' | 'info' | string;
     /** Título visível no sidebar e cabeçalhos */
     title: string;
   /** Slug / subpasta onde reside content.mdx */
     path: string;
     /** Flag de publicação; false oculta do menu e do SSG */
     visible?: boolean;
-    /** Número atribuído dinamicamente quando `type === "module"` e `visible !== false` */
+  /** Número atribuído dinamicamente quando o tipo for numerável (módulos teóricos ou práticos) e `visible !== false` */
     number?: number | null;
 };
 
@@ -44,14 +50,14 @@ export async function getCourse(slug: string): Promise<Course> {
     const raw = await fs.readFile(jsonPath, 'utf8'); 
     const data = JSON.parse(raw);
 
-    let moduleCounter = 1;
+  let moduleCounter = 1;
     const entries = data.entries.map((e: CourseEntry) => {
         const visible = e.visible !== false;
         return {
             ...e,
             visible,
             number:
-                visible && e.type === 'module'
+                visible && (e.type === 'modulo-teorico' || e.type === 'modulo-pratico')
                     ? moduleCounter++               // numerar
                     : null,
         };

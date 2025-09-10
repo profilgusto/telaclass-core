@@ -22,9 +22,11 @@ export function CourseSidebar({
     const pathname = usePathname();
     const normalize = (s: string) => s.replace(/^\/+|\/+$/g, '');
 
-        const visible = course.entries.filter(e => e.visible !== false)
-        const modules = visible.filter(e => e.type === 'module')
-        const activities = visible.filter(e => e.type === 'activity')
+    const visible = course.entries.filter(e => e.visible !== false)
+    const modTeoricos = visible.filter(e => e.type === 'modulo-teorico')
+    const modPraticos = visible.filter(e => e.type === 'modulo-pratico')
+    const atividades = visible.filter(e => e.type === 'atividade-avaliativa')
+    const recursos = visible.filter(e => e.type === 'recurso')
         return (
                 <nav className="p-[var(--space-md)] space-y-[var(--space-lg)] text-sm overflow-y-auto overscroll-contain h-full" aria-label={`Navegação da disciplina ${course.title}`}>
                                     <div className="mb-4">
@@ -36,21 +38,21 @@ export function CourseSidebar({
                                                 {course.title}
                                             </Link>
                                     </div>
-                        {modules.length > 0 && (
-                            <div className="space-y-1" aria-label="Módulos">
-                                <div className="text-[10px] uppercase tracking-wide font-semibold opacity-60 mb-1">Módulos</div>
-                                {modules.map((e: CourseEntry) => {
+                        {modTeoricos.length > 0 && (
+                            <div className="space-y-1" aria-label="Módulos teóricos">
+                                <div className="text-[10px] uppercase tracking-wide font-semibold opacity-60 mb-1">Módulos teóricos</div>
+                                {modTeoricos.map((e: CourseEntry) => {
                                     const slugPath = normalize(e.path as string)
                                     const href = `/disciplinas/${slug}/${slugPath}`
                                     const active = normalize(pathname) === normalize(href)
-                                    const isCurrentModule = currentModulePath && normalize(currentModulePath) === slugPath && e.type === 'module'
+                                    const isCurrentModule = currentModulePath && normalize(currentModulePath) === slugPath && (e.type === 'modulo-teorico' || e.type === 'modulo-pratico')
                                     return (
                                         <div key={e.id}>
                                             <Link
                                                 href={href}
                                                 className={clsx('block hover:underline', active && 'font-medium')}
                                             >
-                                                {e.type === 'module' && e.number ? `${e.number}. ` : ''}{e.title}
+                                                {e.number ? `${e.number}. ` : ''}{e.title}
                                             </Link>
                                             {isCurrentModule && headings.length > 0 && (
                                                 <ul className="ml-4 mt-1 space-y-1 border-l border-border pl-3 text-xs">
@@ -80,10 +82,54 @@ export function CourseSidebar({
                                 })}
                             </div>
                         )}
-                        {activities.length > 0 && (
-                            <div className="space-y-1" aria-label="Atividades">
-                                <div className="text-[10px] uppercase tracking-wide font-semibold opacity-60 mb-1">Atividades</div>
-                                {activities.map(a => {
+                        {modPraticos.length > 0 && (
+                            <div className="space-y-1" aria-label="Módulos práticos">
+                                <div className="text-[10px] uppercase tracking-wide font-semibold opacity-60 mb-1">Módulos práticos</div>
+                                {modPraticos.map((e: CourseEntry) => {
+                                    const slugPath = normalize(e.path as string)
+                                    const href = `/disciplinas/${slug}/${slugPath}`
+                                    const active = normalize(pathname) === normalize(href)
+                                    const isCurrentModule = currentModulePath && normalize(currentModulePath) === slugPath && (e.type === 'modulo-teorico' || e.type === 'modulo-pratico')
+                                    return (
+                                        <div key={e.id}>
+                                            <Link
+                                                href={href}
+                                                className={clsx('block hover:underline', active && 'font-medium')}
+                                            >
+                                                {e.number ? `${e.number}. ` : ''}{e.title}
+                                            </Link>
+                                            {isCurrentModule && headings.length > 0 && (
+                                                <ul className="ml-4 mt-1 space-y-1 border-l border-border pl-3 text-xs">
+                                                    {headings.map(h => {
+                                                        const headingHref = `${href}#${h.id}`
+                                                        return (
+                                                            <li key={h.id}>
+                                                                <a
+                                                                    href={headingHref}
+                                                                    className={clsx(
+                                                                        'block hover:underline transition-colors',
+                                                                        currentHeadingId === h.id
+                                                                            ? 'opacity-100 font-medium text-primary'
+                                                                            : 'opacity-70 hover:opacity-100'
+                                                                    )}
+                                                                    aria-current={currentHeadingId === h.id ? 'true' : undefined}
+                                                                >
+                                                                    {h.text}
+                                                                </a>
+                                                            </li>
+                                                        )
+                                                    })}
+                                                </ul>
+                                            )}
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        )}
+                        {atividades.length > 0 && (
+                            <div className="space-y-1" aria-label="Atividades avaliativas">
+                                <div className="text-[10px] uppercase tracking-wide font-semibold opacity-60 mb-1">Atividades avaliativas</div>
+                                {atividades.map(a => {
                                     const slugPath = normalize(a.path as string)
                                     const href = `/disciplinas/${slug}/${slugPath}`
                                     const active = normalize(pathname) === normalize(href)
@@ -94,6 +140,26 @@ export function CourseSidebar({
                                                 className={clsx('block hover:underline', active && 'font-medium')}
                                             >
                                                 {a.title}
+                                            </Link>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        )}
+                        {recursos.length > 0 && (
+                            <div className="space-y-1" aria-label="Recursos">
+                                <div className="text-[10px] uppercase tracking-wide font-semibold opacity-60 mb-1">Recursos</div>
+                                {recursos.map(r => {
+                                    const slugPath = normalize(r.path as string)
+                                    const href = `/disciplinas/${slug}/${slugPath}`
+                                    const active = normalize(pathname) === normalize(href)
+                                    return (
+                                        <div key={r.id}>
+                                            <Link
+                                                href={href}
+                                                className={clsx('block hover:underline', active && 'font-medium')}
+                                            >
+                                                {r.title}
                                             </Link>
                                         </div>
                                     )
