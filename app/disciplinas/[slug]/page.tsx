@@ -65,13 +65,13 @@ export default async function DisciplinaHome({
                   '!bg-emerald-50 dark:!bg-emerald-950/30 !border-emerald-200 dark:!border-emerald-950/70 hover:!bg-emerald-100 dark:hover:!bg-emerald-950/50 transition-colors'
                 )}
               >
-                <span className="font-bold text-xs uppercase tracking-wide opacity-70 text-emerald-900 dark:text-emerald-200">{m.number ? `Módulo ${m.number}` : 'Módulo'}</span>
+                <span className="font-bold text-xs uppercase tracking-wide opacity-70 text-emerald-900 dark:text-emerald-200">{m.number ? `Módulo teórico ${m.number}` : 'Módulo teórico'}</span>
                 <span className="font-medium leading-snug line-clamp-2 break-words whitespace-normal text-emerald-950 dark:text-emerald-100">{m.title}</span>
               </Link>
             ))}
           </div>
         </div>
-        {modPraticos.length > 0 && (
+    {modPraticos.length > 0 && ( 
           <div className="space-y-3">
             <h2 className="text-xl font-semibold">Módulos práticos</h2>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -85,7 +85,7 @@ export default async function DisciplinaHome({
                     '!bg-emerald-50 dark:!bg-emerald-950/30 !border-emerald-200 dark:!border-emerald-950/70 hover:!bg-emerald-100 dark:hover:!bg-emerald-950/50 transition-colors'
                   )}
                 >
-                  <span className="font-bold text-xs uppercase tracking-wide opacity-70 text-emerald-900 dark:text-emerald-200">{m.number ? `Módulo ${m.number}` : 'Módulo'}</span>
+        <span className="font-bold text-xs uppercase tracking-wide opacity-70 text-emerald-900 dark:text-emerald-200">{m.number ? `Módulo prático ${m.number}` : 'Módulo prático'}</span>
                   <span className="font-medium leading-snug line-clamp-2 break-words whitespace-normal text-emerald-950 dark:text-emerald-100">{m.title}</span>
                 </Link>
               ))}

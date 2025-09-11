@@ -23,7 +23,11 @@ export type CourseEntry = {
     path: string;
     /** Flag de publicação; false oculta do menu e do SSG */
     visible?: boolean;
-  /** Número atribuído dinamicamente quando o tipo for numerável (módulos teóricos ou práticos) e `visible !== false` */
+  /** Número atribuído dinamicamente por categoria:
+   *  - modulo-teorico: contador independente começando em 1
+   *  - modulo-pratico: contador independente começando em 1
+   *  Outros tipos: null
+   */
     number?: number | null;
 };
 
@@ -50,15 +54,18 @@ export async function getCourse(slug: string): Promise<Course> {
     const raw = await fs.readFile(jsonPath, 'utf8'); 
     const data = JSON.parse(raw);
 
-  let moduleCounter = 1;
+  let moduloTeoricoCounter = 1;
+  let moduloPraticoCounter = 1;
     const entries = data.entries.map((e: CourseEntry) => {
         const visible = e.visible !== false;
         return {
             ...e,
             visible,
             number:
-                visible && (e.type === 'modulo-teorico' || e.type === 'modulo-pratico')
-                    ? moduleCounter++               // numerar
+                visible && e.type === 'modulo-teorico'
+                  ? moduloTeoricoCounter++
+                  : visible && e.type === 'modulo-pratico'
+                    ? moduloPraticoCounter++
                     : null,
         };
     });
