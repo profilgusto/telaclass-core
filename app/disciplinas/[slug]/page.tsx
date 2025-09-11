@@ -1,7 +1,5 @@
-import Link from 'next/link';
 import { getCourse } from '@/lib/content';
-import { buttonVariants } from '@/components/ui/button';
-import clsx from 'clsx';
+import ButtonModules from '@/components/button-modules';
 
 export default async function DisciplinaHome({
   params,
@@ -55,19 +53,13 @@ export default async function DisciplinaHome({
           )}
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {modTeoricos.map((m) => (
-              <Link
+              <ButtonModules
                 key={m.id}
                 href={`/disciplinas/${slug}/${m.path}`}
-                className={clsx(
-                  buttonVariants({ variant: 'outline', size: 'lg' }),
-                  'justify-start h-auto py-4 flex flex-col items-start space-y-1 text-left !whitespace-normal break-words',
-                  // Força override das cores (o variant outline injeta dark:bg-input/30 etc.)
-                  '!bg-emerald-50 dark:!bg-emerald-950/30 !border-emerald-200 dark:!border-emerald-950/70 hover:!bg-emerald-100 dark:hover:!bg-emerald-950/50 transition-colors'
-                )}
-              >
-                <span className="font-bold text-xs uppercase tracking-wide opacity-70 text-emerald-900 dark:text-emerald-200">{m.number ? `Módulo teórico ${m.number}` : 'Módulo teórico'}</span>
-                <span className="font-medium leading-snug line-clamp-2 break-words whitespace-normal text-emerald-950 dark:text-emerald-100">{m.title}</span>
-              </Link>
+                badge={m.number ? `Módulo teórico ${m.number}` : 'Módulo teórico'}
+                title={m.title}
+                colorTailWind="emerald"
+              />
             ))}
           </div>
         </div>
@@ -76,18 +68,13 @@ export default async function DisciplinaHome({
             <h2 className="text-xl font-semibold">Módulos práticos</h2>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {modPraticos.map(m => (
-                <Link
+                <ButtonModules
                   key={m.id}
                   href={`/disciplinas/${slug}/${m.path}`}
-                  className={clsx(
-                    buttonVariants({ variant: 'outline', size: 'lg' }),
-                    'justify-start h-auto py-4 flex flex-col items-start space-y-1 text-left !whitespace-normal break-words',
-                    '!bg-emerald-50 dark:!bg-emerald-950/30 !border-emerald-200 dark:!border-emerald-950/70 hover:!bg-emerald-100 dark:hover:!bg-emerald-950/50 transition-colors'
-                  )}
-                >
-        <span className="font-bold text-xs uppercase tracking-wide opacity-70 text-emerald-900 dark:text-emerald-200">{m.number ? `Módulo prático ${m.number}` : 'Módulo prático'}</span>
-                  <span className="font-medium leading-snug line-clamp-2 break-words whitespace-normal text-emerald-950 dark:text-emerald-100">{m.title}</span>
-                </Link>
+                  badge={m.number ? `Módulo prático ${m.number}` : 'Módulo prático'}
+                  title={m.title}
+                  colorTailWind="lime"
+                />
               ))}
             </div>
           </div>
@@ -97,19 +84,13 @@ export default async function DisciplinaHome({
             <h2 className="text-xl font-semibold">Atividades avaliativas</h2>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {atividades.map(a => (
-                <Link
+                <ButtonModules
                   key={a.id}
                   href={`/disciplinas/${slug}/${a.path}`}
-                  className={clsx(
-                    buttonVariants({ variant: 'outline', size: 'lg' }),
-                    'justify-start h-auto py-4 flex flex-col items-start space-y-1 text-left !whitespace-normal break-words',
-                    // Força override das cores (o variant outline injeta dark:bg-input/30 etc.)
-                    '!bg-indigo-50 dark:!bg-indigo-950/30 !border-indigo-200 dark:!border-indigo-950/70 hover:!bg-indigo-100 dark:hover:!bg-indigo-950/50 transition-colors'
-                  )}
-                >
-                  <span className="font-bold text-xs uppercase tracking-wide opacity-70 text-indigo-900 dark:text-indigo-200">Atividade</span>
-                  <span className="font-medium leading-snug line-clamp-2 break-words whitespace-normal text-indigo-950 dark:text-indigo-100">{a.title}</span>
-                </Link>
+                  badge="Atividade"
+                  title={a.title}
+                  colorTailWind="amber"
+                />
               ))}
             </div>
           </div>
@@ -119,18 +100,13 @@ export default async function DisciplinaHome({
             <h2 className="text-xl font-semibold">Recursos</h2>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {recursos.map(r => (
-                <Link
+                <ButtonModules
                   key={r.id}
                   href={`/disciplinas/${slug}/${r.path}`}
-                  className={clsx(
-                    buttonVariants({ variant: 'outline', size: 'lg' }),
-                    'justify-start h-auto py-4 flex flex-col items-start space-y-1 text-left !whitespace-normal break-words',
-                    '!bg-slate-50 dark:!bg-slate-800/40 !border-slate-200 dark:!border-slate-700 hover:!bg-slate-100 dark:hover:!bg-slate-800/60 transition-colors'
-                  )}
-                >
-                  <span className="font-bold text-xs uppercase tracking-wide opacity-70 text-slate-700 dark:text-slate-300">Recurso</span>
-                  <span className="font-medium leading-snug line-clamp-2 break-words whitespace-normal text-slate-900 dark:text-slate-100">{r.title}</span>
-                </Link>
+                  badge="Recurso"
+                  title={r.title}
+                  colorTailWind="indigo"
+                />
               ))}
             </div>
           </div>

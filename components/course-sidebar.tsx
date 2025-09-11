@@ -133,6 +133,7 @@ export function CourseSidebar({
                                     const slugPath = normalize(a.path as string)
                                     const href = `/disciplinas/${slug}/${slugPath}`
                                     const active = normalize(pathname) === normalize(href)
+                                    const isCurrent = currentModulePath && normalize(currentModulePath) === slugPath && a.type === 'atividade-avaliativa'
                                     return (
                                         <div key={a.id}>
                                             <Link
@@ -141,6 +142,29 @@ export function CourseSidebar({
                                             >
                                                 {a.title}
                                             </Link>
+                                            {isCurrent && headings.length > 0 && (
+                                                <ul className="ml-4 mt-1 space-y-1 border-l border-border pl-3 text-xs">
+                                                    {headings.map(h => {
+                                                        const headingHref = `${href}#${h.id}`
+                                                        return (
+                                                            <li key={h.id}>
+                                                                <a
+                                                                    href={headingHref}
+                                                                    className={clsx(
+                                                                        'block hover:underline transition-colors',
+                                                                        currentHeadingId === h.id
+                                                                            ? 'opacity-100 font-medium text-primary'
+                                                                            : 'opacity-70 hover:opacity-100'
+                                                                    )}
+                                                                    aria-current={currentHeadingId === h.id ? 'true' : undefined}
+                                                                >
+                                                                    {h.text}
+                                                                </a>
+                                                            </li>
+                                                        )
+                                                    })}
+                                                </ul>
+                                            )}
                                         </div>
                                     )
                                 })}
@@ -153,6 +177,7 @@ export function CourseSidebar({
                                     const slugPath = normalize(r.path as string)
                                     const href = `/disciplinas/${slug}/${slugPath}`
                                     const active = normalize(pathname) === normalize(href)
+                                    const isCurrent = currentModulePath && normalize(currentModulePath) === slugPath && r.type === 'recurso'
                                     return (
                                         <div key={r.id}>
                                             <Link
@@ -161,6 +186,29 @@ export function CourseSidebar({
                                             >
                                                 {r.title}
                                             </Link>
+                                            {isCurrent && headings.length > 0 && (
+                                                <ul className="ml-4 mt-1 space-y-1 border-l border-border pl-3 text-xs">
+                                                    {headings.map(h => {
+                                                        const headingHref = `${href}#${h.id}`
+                                                        return (
+                                                            <li key={h.id}>
+                                                                <a
+                                                                    href={headingHref}
+                                                                    className={clsx(
+                                                                        'block hover:underline transition-colors',
+                                                                        currentHeadingId === h.id
+                                                                            ? 'opacity-100 font-medium text-primary'
+                                                                            : 'opacity-70 hover:opacity-100'
+                                                                    )}
+                                                                    aria-current={currentHeadingId === h.id ? 'true' : undefined}
+                                                                >
+                                                                    {h.text}
+                                                                </a>
+                                                            </li>
+                                                        )
+                                                    })}
+                                                </ul>
+                                            )}
                                         </div>
                                     )
                                 })}
