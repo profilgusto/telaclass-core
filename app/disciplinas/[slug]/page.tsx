@@ -89,7 +89,7 @@ export default async function DisciplinaHome({
                   href={`/disciplinas/${slug}/${a.path}`}
                   badge="Atividade"
                   title={a.title}
-                  colorTailWind="amber"
+                  colorTailWind="rose"
                 />
               ))}
             </div>

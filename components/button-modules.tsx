@@ -11,7 +11,8 @@ export type ColorName = typeof COLOR_NAMES[number]
 
 export interface ModuleButtonProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   href: string
-  badge: string
+  /** Texto curto opcional (ex: "Módulo teórico 1"). Se não informado, só mostra o título. */
+  badge?: string
   title: string
   /** Nome da cor Tailwind (sem shade). */
   colorTailWind: ColorName | string
@@ -31,20 +32,24 @@ function buildColorClasses(color: string) {
 }
 
 export function ButtonModules({ href, badge, title, colorTailWind, className, ...rest }: ModuleButtonProps) {
-  const { container, badge: badgeCls, title: titleCls } = buildColorClasses(colorTailWind)
+  const { container, title: titleCls } = buildColorClasses(colorTailWind)
+  const showBadge = !!badge
   return (
     <Link
       href={href}
       className={clsx(
         buttonVariants({ variant: 'outline', size: 'lg' }),
-        'justify-start h-auto py-4 flex flex-col items-start space-y-1 text-left !whitespace-normal break-words',
+        'justify-start h-auto py-4 flex flex-col items-start text-left !whitespace-normal break-words',
+        showBadge && 'space-y-1',
         container,
         className
       )}
       {...rest}
     >
-      <span className={clsx('font-bold text-xs uppercase tracking-wide opacity-70', badgeCls)}>{badge}</span>
-      <span className={clsx('font-medium leading-snug line-clamp-2 break-words whitespace-normal', titleCls)}>{title}</span>
+      {showBadge && (
+        <span className={clsx('text-xs uppercase tracking-wide font-medium text-muted-foreground')}>{badge}</span>
+      )}
+      <span className={clsx('text-base font-semibold leading-snug line-clamp-2 break-words whitespace-normal', titleCls)}>{title}</span>
     </Link>
   )
 }
