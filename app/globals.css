@@ -211,7 +211,7 @@ mjx-container:not([display="true"]) {
   font-size: 1.15rem;
   line-height: 1.6;
   /* Escalable list sizing variables */
-  --presentation-font-base-size: 3rem;
+  --presentation-font-base-size: 2.5rem;
   --list-step: 0.9; /* multiplier per nesting level */
 }
 
