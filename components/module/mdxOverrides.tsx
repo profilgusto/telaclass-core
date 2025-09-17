@@ -19,7 +19,7 @@ export function useMdxOverrides({ slug, mod }: OverrideDeps) {
       const encoded = normalized.split('/').map(encodeURIComponent).join('/')
       const url = isAbsolute ? s : `/disciplinas/${encodeURIComponent(slug)}/${encodeURIComponent(mod)}/${encoded}`
       const { className, ...others } = rest
-      const merged = ['mx-auto','block', className].filter(Boolean).join(' ')
+      const merged = ['mx-auto','block','max-w-full','h-auto', className].filter(Boolean).join(' ')
       return <img src={url} alt={alt} className={merged} {...others} />
     }
   }, [slug, mod])
@@ -72,7 +72,7 @@ export function useMdxOverrides({ slug, mod }: OverrideDeps) {
         const seemsImage = (el.props && typeof el.props.alt === 'string' && (el.props.src || isHtmlImg || isImgComponent))
         if (isHtmlImg || isImgComponent || seemsImage) {
           const alt = el.props?.alt
-          const base = ['mx-auto','block', el.props.className].filter(Boolean).join(' ')
+          const base = ['mx-auto','block','max-w-full','h-auto', el.props.className].filter(Boolean).join(' ')
           if (alt) return (
             <figure className="my-6 flex flex-col items-center text-center">
               {cloneElement(el, { className: base })}

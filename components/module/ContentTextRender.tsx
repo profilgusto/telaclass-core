@@ -136,7 +136,7 @@ export function ContentTextRender({ course, slug, mod, manifestKey, headings, ac
       <aside className="hidden md:block w-60 shrink-0 border-r border-border bg-[var(--sidebar)] text-[var(--sidebar-foreground)] sticky top-14 h-[calc(100vh-56px)]">
         <CourseSidebar course={course} slug={slug} currentModulePath={mod} headings={headings} currentHeadingId={currentHeadingId} />
       </aside>
-      <main className="flex-1 px-[var(--space-lg)] py-[var(--space-md)]">
+      <main className="flex-1 min-w-0 px-[var(--space-lg)] py-[var(--space-md)]">
         <ModuleContentCore manifestKey={manifestKey} slug={slug} mod={mod} mode="texto" />
       </main>
     </div>

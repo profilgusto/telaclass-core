@@ -52,7 +52,7 @@ export function YouTube({ url, id, title, start, className }: YouTubeProps) {
   if (start && Number.isFinite(start) && start! > 0) params.set('start', String(start))
   const src = `https://www.youtube.com/embed/${vid}?${params.toString()}`
   return (
-    <div className={["my-8 mx-auto w-full max-w-4xl aspect-video relative", className].filter(Boolean).join(' ')}>
+    <div className={["my-8 mx-auto w-full max-w-full sm:max-w-4xl aspect-video relative", className].filter(Boolean).join(' ')}>
       <iframe
         src={src}
         title={title || 'YouTube video'}

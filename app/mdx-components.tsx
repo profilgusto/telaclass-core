@@ -124,7 +124,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     img: (p: any) => {
       // Plain img used directly (not inside markdown paragraph) → center by default.
       const { className, ...rest } = p;
-      const merged = ['mx-auto','block','my-6', className].filter(Boolean).join(' ')
+      const merged = ['mx-auto','block','my-6','max-w-full','h-auto', className].filter(Boolean).join(' ')
       return <img {...rest} className={merged} />
     },
 
