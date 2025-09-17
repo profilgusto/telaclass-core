@@ -29,9 +29,19 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     }
     // Fallback for non-standard structures
     return (
-      <pre className={['rounded-md p-4 my-4 overflow-x-auto', p.className ?? ''].join(' ').trim()}>
-        {p.children}
-      </pre>
+      <div className="mx-auto my-6 max-w-3xl">
+        <div className="relative rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm bg-zinc-50 dark:bg-zinc-900">
+          <pre
+            className={[
+              'overflow-x-auto p-4 rounded-md',
+              'bg-[#f6f8fa] dark:bg-[#0d1117]',
+              p.className ?? ''
+            ].join(' ').trim()}
+          >
+            {p.children}
+          </pre>
+        </div>
+      </div>
     );
   };
   return {
