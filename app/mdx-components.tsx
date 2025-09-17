@@ -133,9 +133,27 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     // Images: center by default
     img: (p: any) => {
       // Plain img used directly (not inside markdown paragraph) → center by default.
-      const { className, ...rest } = p;
-      const merged = ['mx-auto','block','my-6','max-w-full','h-auto', className].filter(Boolean).join(' ')
-      return <img {...rest} className={merged} />
+      const { className, title, style, ...rest } = p;
+      let wsm: number | undefined
+      let wlg: number | undefined
+      if (typeof title === 'string' && title) {
+        const mSm = title.match(/(?:^|\s)wsm=(\d{1,3})(?=\s|$)/i)
+        const mLg = title.match(/(?:^|\s)wlg=(\d{1,3})(?=\s|$)/i)
+        if (mSm) wsm = Math.max(0, Math.min(100, parseInt(mSm[1], 10)))
+        if (mLg) wlg = Math.max(0, Math.min(100, parseInt(mLg[1], 10)))
+        if (!mSm || !mLg) {
+          const altFmt = title.match(/(?:^|\s)size=(\d{1,3})\s*,\s*(\d{1,3})(?=\s|$)/i)
+          if (altFmt) {
+            wsm = wsm ?? Math.max(0, Math.min(100, parseInt(altFmt[1], 10)))
+            wlg = wlg ?? Math.max(0, Math.min(100, parseInt(altFmt[2], 10)))
+          }
+        }
+      }
+      const merged = ['mx-auto','block','my-6','max-w-full','h-auto', 'mdx-img', className].filter(Boolean).join(' ')
+      const styleVars: any = { ...style }
+      if (typeof wsm === 'number') styleVars['--mdx-img-wsm'] = `${wsm}vw`
+      if (typeof wlg === 'number') styleVars['--mdx-img-wlg'] = `${wlg}vw`
+      return <img {...rest} className={merged} style={styleVars} />
     },
 
     // Audio: centered player

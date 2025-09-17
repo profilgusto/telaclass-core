@@ -158,6 +158,10 @@
 /* Prevent horizontal overflow in prose and code blocks (mobile safety) */
 .prose { max-width: 100%; overflow-wrap: anywhere; }
 .prose img { max-width: 100%; height: auto; }
+.prose img.mdx-img { width: var(--mdx-img-wsm, auto); }
+@media (min-width: 768px) {
+  .prose img.mdx-img { width: var(--mdx-img-wlg, var(--mdx-img-wsm, auto)); }
+}
 .prose pre { max-width: 100%; overflow-x: auto; }
 .prose code { word-break: break-word; }
 .prose table { max-width: 100%; }

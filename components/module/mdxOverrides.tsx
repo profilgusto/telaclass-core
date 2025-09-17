@@ -12,15 +12,35 @@ export interface OverrideDeps {
 
 export function useMdxOverrides({ slug, mod }: OverrideDeps) {
   const Img = useMemo(() => {
-    return function Img({ src, alt, ...rest }: { src?: string; alt?: string } & Record<string, any>) {
+    return function Img({ src, alt, ...rest }: { src?: string; alt?: string; title?: string } & Record<string, any>) {
       const s = typeof src === 'string' ? src : ''
       const isAbsolute = /^([a-z]+:)?\/\//i.test(s) || s.startsWith('/')
       const normalized = !isAbsolute ? `${s.includes('/') ? s : `img/${s}`}`.replace(/^\.?\/*/, '') : s
       const encoded = normalized.split('/').map(encodeURIComponent).join('/')
       const url = isAbsolute ? s : `/disciplinas/${encodeURIComponent(slug)}/${encodeURIComponent(mod)}/${encoded}`
-      const { className, ...others } = rest
-      const merged = ['mx-auto','block','max-w-full','h-auto', className].filter(Boolean).join(' ')
-      return <img src={url} alt={alt} className={merged} {...others} />
+      const { className, title, style, ...others } = rest
+      // Parse optional widths from title: e.g., "wsm=100 wlg=60" (percent of viewport width)
+      let wsm: number | undefined
+      let wlg: number | undefined
+      if (typeof title === 'string' && title) {
+        const mSm = title.match(/(?:^|\s)wsm=(\d{1,3})(?=\s|$)/i)
+        const mLg = title.match(/(?:^|\s)wlg=(\d{1,3})(?=\s|$)/i)
+        if (mSm) wsm = Math.max(0, Math.min(100, parseInt(mSm[1], 10)))
+        if (mLg) wlg = Math.max(0, Math.min(100, parseInt(mLg[1], 10)))
+        // Alternative format: size=SM,LG
+        if (!mSm || !mLg) {
+          const altFmt = title.match(/(?:^|\s)size=(\d{1,3})\s*,\s*(\d{1,3})(?=\s|$)/i)
+          if (altFmt) {
+            wsm = wsm ?? Math.max(0, Math.min(100, parseInt(altFmt[1], 10)))
+            wlg = wlg ?? Math.max(0, Math.min(100, parseInt(altFmt[2], 10)))
+          }
+        }
+      }
+      const merged = ['mx-auto','block','max-w-full','h-auto','mdx-img', className].filter(Boolean).join(' ')
+      const styleVars: any = { ...style }
+      if (typeof wsm === 'number') styleVars['--mdx-img-wsm'] = `${wsm}vw`
+      if (typeof wlg === 'number') styleVars['--mdx-img-wlg'] = `${wlg}vw`
+      return <img src={url} alt={alt} className={merged} style={styleVars} {...others} />
     }
   }, [slug, mod])
 
