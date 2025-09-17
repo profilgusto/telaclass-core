@@ -205,6 +205,36 @@ mjx-container[display="true"] {
   margin: 1rem 0;
 }
 
+/* Discrete scroll wrapper for wide display equations */
+/* Layout: [ scrollable equation | sticky tag ] */
+.math-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+.math-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.math-scroll mjx-container[display="true"] {
+  display: inline-block !important; /* inside scroll area */
+  min-width: min-content;
+}
+.math-scroll .mjx-tag { display: none !important; }
+.math-tag {
+  position: sticky;
+  right: 0;
+  top: 0; /* stays visible while equation row is in view */
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  color: inherit;
+  opacity: 0.85;
+}
+/* Ensure the tag typography blends with MathJax tag */
+.math-tag .math-tag-text { display: inline-block; font-style: normal; }
+
 /* Presentation mode: harmonize display math size with base presentation font */
 .presentation-deck .prose-presentation mjx-container[display="true"] {
   font-size: var(--presentation-font-base-size); /* same scale as paragraphs */

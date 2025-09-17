@@ -4,6 +4,7 @@ import { MDXProvider } from '@mdx-js/react'
 import { MDX_MANIFEST } from '@/content/mdx-manifest'
 import { useMdxOverrides } from './mdxOverrides'
 import { ViewModeProvider } from '@/components/presentation/useViewMode'
+import MathAutoWrap from '@/components/MathAutoWrap'
 
 export type ModuleContentMode = 'texto' | 'apresentacao'
 
@@ -51,14 +52,16 @@ export function ModuleContentCore({ manifestKey, slug, mod, mode, wrapWithSlideD
   const content = (
     <ViewModeProvider mode={mode}>
       <MDXProvider components={components}>
-        <div
-          className={[
-            'prose max-w-none',
-            mode === 'apresentacao' && 'prose-presentation'
-          ].filter(Boolean).join(' ')}
-        >
-          <MDX components={components} />
-        </div>
+        <MathAutoWrap>
+          <div
+            className={[
+              'prose max-w-none',
+              mode === 'apresentacao' && 'prose-presentation'
+            ].filter(Boolean).join(' ')}
+          >
+            <MDX components={components} />
+          </div>
+        </MathAutoWrap>
       </MDXProvider>
     </ViewModeProvider>
   )
