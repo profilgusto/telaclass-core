@@ -120,7 +120,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     // Tables
     table: (p) => (
       <div className="my-6 w-full overflow-x-auto">
-        <table className="w-full border-collapse text-sm" {...p} />
+        <table className="w-full border-collapse" {...p} />
       </div>
     ),
     th: (p) => <th className="border px-3 py-2 text-left font-semibold" {...p} />,

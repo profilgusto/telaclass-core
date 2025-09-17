@@ -7,6 +7,9 @@
   --font-geist-sans: ui-sans-serif, system-ui, sans-serif;
   --font-geist-mono: ui-monospace, SFMono-Regular, monospace;
   --radius: 0.625rem;
+  /* Content font base (mobile/desktop). Tune these to scale all content text */
+  --content-font-mobile: 1.2rem;      /* default base for mobile */
+  --content-font-desktop: 1.5rem;  /* default base for ≥ md */
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -164,7 +167,35 @@
 }
 .prose pre { max-width: 100%; overflow-x: auto; }
 .prose code { word-break: break-word; }
-.prose table { max-width: 100%; }
+.prose table { max-width: 100%; font-size: 0.8em; }
+
+/* Content base font system (text mode). Presentation mode has its own scale. */
+.prose:not(.prose-presentation) {
+  /* Expose a computed base variable switching at md */
+  --content-font-base: var(--content-font-mobile);
+  font-size: var(--content-font-base);
+}
+@media (min-width: 768px) {
+  .prose:not(.prose-presentation) {
+    --content-font-base: var(--content-font-desktop);
+    font-size: var(--content-font-base);
+  }
+}
+
+/* Scale common elements from the base. Keep margins as before. */
+.prose:not(.prose-presentation) h1 { font-size: calc(var(--content-font-base) * 2.0); line-height: 1.2; }
+.prose:not(.prose-presentation) h2 { font-size: calc(var(--content-font-base) * 1.6); line-height: 1.3; }
+.prose:not(.prose-presentation) h3 { font-size: calc(var(--content-font-base) * 1.35); line-height: 1.3; }
+.prose:not(.prose-presentation) h4 { font-size: calc(var(--content-font-base) * 1.2); line-height: 1.3; }
+.prose:not(.prose-presentation) h5 { font-size: calc(var(--content-font-base) * 1.1); line-height: 1.35; }
+.prose:not(.prose-presentation) h6 { font-size: calc(var(--content-font-base) * 1.0); line-height: 1.35; }
+.prose:not(.prose-presentation) p { font-size: 1em; }
+.prose:not(.prose-presentation) pre,
+.prose:not(.prose-presentation) code { font-size: 0.95em; }
+
+/* MathJax equations scale with base */
+.prose:not(.prose-presentation) mjx-container[display="true"] { font-size: 1.05em; }
+.prose:not(.prose-presentation) mjx-container:not([display="true"]) { font-size: 1em; }
 
 
 /* Bloco (display math) */
