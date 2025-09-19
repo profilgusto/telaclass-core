@@ -102,7 +102,7 @@ export function useMdxOverrides({ slug, mod }: OverrideDeps) {
           return cloneElement(el, { className: base })
         }
       }
-      return <p className={['leading-7','mb-4','last:mb-0', rest.className].filter(Boolean).join(' ')} {...rest}>{children}</p>
+      return <p className={['last:mb-0', rest.className].filter(Boolean).join(' ')} {...rest}>{children}</p>
     }
   }, [])
 

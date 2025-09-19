@@ -85,7 +85,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
             return React.cloneElement(el, { className: mergedClass })
         }
       }
-      return <p className="leading-7 mb-4 last:mb-0" {...rest}>{children}</p>
+      return <p className="last:mb-0" {...rest}>{children}</p>
     },
     strong: (p) => <strong className="font-semibold" {...p} />,
     em: (p) => <em className="italic" {...p} />,
@@ -93,7 +93,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     // Lists
     ul: (p) => <ul className="list-disc ms-6 my-4" {...p} />,
     ol: (p) => <ol className="list-decimal ms-6 my-4" {...p} />,
-    li: (p) => <li className="my-1" {...p} />,
+    li: (p) => <li className="my-2" {...p} />,
 
     // Links: open external in new tab, internal via Next/Link
     a: ({ href, children, ...rest }) => {
