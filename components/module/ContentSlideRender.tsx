@@ -18,7 +18,7 @@ const SlideDeck = dynamic(() => import('@/components/presentation/SlideDeck'), {
 export function ContentSlideRender({ manifestKey, slug, mod, active }: Props) {
   return (
     <div className={[active ? '' : 'hidden', 'min-h-screen flex flex-col'].join(' ')}>
-      <div className="flex-1 min-w-0 px-[var(--space-lg)] py-[var(--space-md)]">
+      <div className="flex-1 min-w-0 py-[var(--space-md)]">
         <ModuleContentCore
           manifestKey={manifestKey}
           slug={slug}

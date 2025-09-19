@@ -47,6 +47,7 @@
   --space-sm: 0.5rem;  /* 8 px  */
   --space-md: 1rem;    /* 16 px */
   --space-lg: 2rem;    /* 32 px */
+  --space-xl: 3rem;    /* 48 px - for content lateral breathing space */
 
   /* —— Z-index tokens —— */
   --z-overlay: 50; /* dropdown / popover */
@@ -98,6 +99,7 @@
   --space-sm: var(--space-sm);
   --space-md: var(--space-md);
   --space-lg: var(--space-lg);
+  --space-xl: var(--space-xl);
 
   /* Z-index */
   --z-overlay: var(--z-overlay);
@@ -159,12 +161,61 @@
 }
 
 /* Prevent horizontal overflow in prose and code blocks (mobile safety) */
-.prose { max-width: 100%; overflow-wrap: anywhere; }
+.prose { 
+  max-width: 100%; 
+  overflow-wrap: anywhere;
+  /* Enhanced lateral breathing space for content */
+  padding-left: var(--space-xl);
+  padding-right: var(--space-xl);
+}
+
+/* Responsive padding - tighter on mobile */
+@media (max-width: 767px) {
+  .prose {
+    padding-left: var(--space-lg);
+    padding-right: var(--space-lg);
+  }
+}
+
+/* Extra breathing space on larger screens */
+@media (min-width: 1600px) {
+  .prose {
+    padding-left: calc(3*var(--space-xl) + var(--space-md));
+    padding-right: calc(3*var(--space-xl) + var(--space-md));
+  }
+}
+
 .prose img { max-width: 100%; height: auto; }
 .prose img.mdx-img { width: var(--mdx-img-wsm, auto); }
 @media (min-width: 768px) {
   .prose img.mdx-img { width: var(--mdx-img-wlg, var(--mdx-img-wsm, auto)); }
 }
+
+/* Image margins: ensure standalone images (not in figures) have proper spacing */
+.prose img:not(figure img) {
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+/* Additional spacing for images that are direct children of prose blocks */
+.prose > img, 
+.prose > p > img:only-child {
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+/* Ensure MDX images (with .mdx-img class) have consistent spacing */
+.prose img.mdx-img {
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+/* Override for images inside figures to prevent double margins */
+.prose figure img {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
 .prose pre { max-width: 100%; overflow-x: auto; }
 .prose code { word-break: break-word; }
 .prose table { max-width: 100%; font-size: 0.8em; }
@@ -206,34 +257,15 @@ mjx-container[display="true"] {
 }
 
 /* Discrete scroll wrapper for wide display equations */
-/* Layout: [ scrollable equation | sticky tag ] */
-.math-row {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: start;
-  gap: 0.5rem;
-  margin: 1rem 0;
-}
 .math-scroll {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  margin: 1rem 0; /* align with display math spacing */
 }
 .math-scroll mjx-container[display="true"] {
-  display: inline-block !important; /* inside scroll area */
+  display: inline-block !important; /* center inside scroll area */
   min-width: min-content;
 }
-.math-scroll .mjx-tag { display: none !important; }
-.math-tag {
-  position: sticky;
-  right: 0;
-  top: 0; /* stays visible while equation row is in view */
-  padding-left: 0.25rem;
-  padding-right: 0.25rem;
-  color: inherit;
-  opacity: 0.85;
-}
-/* Ensure the tag typography blends with MathJax tag */
-.math-tag .math-tag-text { display: inline-block; font-style: normal; }
 
 /* Presentation mode: harmonize display math size with base presentation font */
 .presentation-deck .prose-presentation mjx-container[display="true"] {
@@ -392,7 +424,7 @@ mjx-container:not([display="true"]) {
 /* Horizontal sizing variables (tweak these for lateral spacing) */
 .presentation-deck {
   --slide-x-gap: clamp(0.75rem, 1.5vw, 1.25rem); /* outer margin from viewport */
-  --slide-x-pad: 50px;     /* inner padding inside slide */
+  --slide-x-pad: clamp(3rem, 5vw, 5rem);     /* enhanced inner padding inside slide for better breathing space */
   --slide-max-w: 90rem; /* increase from 64rem (4xl) to allow wider content; adjust as needed */
 }
 
@@ -425,6 +457,29 @@ mjx-container:not([display="true"]) {
 /* Make sure figures adapt */
 .presentation-deck .prose-presentation figure { margin: 1rem auto; }
 .presentation-deck .prose-presentation figcaption { font-size: 0.8em; }
+
+/* Presentation mode: reset prose padding since slides already have proper padding */
+.presentation-deck .prose-presentation {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Images in presentation mode - consistent spacing */
+.presentation-deck .prose-presentation img:not(figure img) {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.presentation-deck .prose-presentation img.mdx-img {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Override for images inside figures in presentation mode */
+.presentation-deck .prose-presentation figure img {
+  margin-top: 0;
+  margin-bottom: 0;
+}
 
 /* Neutralize Slide wrapper in text mode so layout matches pre-segmentation */
 .prose:not(.prose-presentation) > section[data-id] { display: contents; }
