@@ -283,31 +283,37 @@
 /* Enhanced H2 heading separator styling */
 .prose .heading-separator,
 .prose hr.mt-16,
+.prose hr.mt-32,
+.prose hr.mt-72,
 .prose hr.mt-1 {
   border: none !important; /* Remove default border */
   height: 2px !important;
   background: linear-gradient(90deg, 
-    oklch(0.5 0 0) 0%, 
+    oklch(1.0 0 0) 0%, 
     oklch(0.3 0 0) 50%, 
-    oklch(0.5 0 0) 100%) !important;
-  opacity: 0.6;
+    oklch(1.0 0 0) 100%) !important;
+  opacity: 0.1;
   border-radius: 1px;
 }
 
 /* Dark mode enhanced separator */
 .dark .prose .heading-separator,
 .dark .prose hr.mt-16,
+.dark .prose hr.mt-32,
+.dark .prose hr.mt-72,
 .dark .prose hr.mt-1 {
   background: linear-gradient(90deg, 
-    oklch(0.7 0 0) 0%, 
-    oklch(0.9 0 0) 50%, 
-    oklch(0.7 0 0) 100%) !important;
+    oklch(0.3 0 0) 0%, 
+    oklch(0.8 0 0) 50%, 
+    oklch(0.3 0 0) 100%) !important;
   opacity: 0.7;
 }
 
 /* Extra emphasis for the main separator (first line) */
 .prose .heading-separator:first-of-type,
-.prose hr.mt-16 {
+.prose hr.mt-16,
+.prose hr.mt-32,
+.prose hr.mt-72 {
   height: 3px !important;
   opacity: 0.8;
 }
@@ -441,6 +447,8 @@ mjx-container:not([display="true"]) {
 
 /* Also hide the mdxOverrides H2 separators in presentation mode */
 .presentation-deck .prose-presentation hr.mt-16,
+.presentation-deck .prose-presentation hr.mt-32,
+.presentation-deck .prose-presentation hr.mt-72,
 .presentation-deck .prose-presentation hr.mt-1 { display: none !important; }
 
 /* Also hide H3 separators in presentation mode */

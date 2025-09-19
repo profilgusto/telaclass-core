@@ -113,8 +113,7 @@ export function useMdxOverrides({ slug, mod }: OverrideDeps) {
         <>
           {mode === 'texto' && (
             <>
-              <hr className="mt-16 mb-0 border-t border-border" />
-              <hr className="mt-1 mb-0 border-t border-border" />
+              <hr className="mt-32 mb-0 border-t border-border" />
             </>
           )}
           <h2 className={['text-2xl','font-semibold','mt-2','mb-4', p.className].filter(Boolean).join(' ')} {...p} />
