@@ -330,8 +330,9 @@
   opacity: 0.3 !important;
 }
 
-.prose:not(.prose-presentation) pre,
-.prose:not(.prose-presentation) code { font-size: 0.95em; }
+.prose:not(.prose-presentation) pre { font-size: 0.9em; } /* Code blocks slightly smaller */
+.prose:not(.prose-presentation) code { font-size: 0.95em; } /* Inline code */
+.prose:not(.prose-presentation) pre code { font-size: inherit; } /* Code inside pre inherits pre size */
 
 /* MathJax equations scale with base */
 .prose:not(.prose-presentation) mjx-container[display="true"] { font-size: 1.05em; }
@@ -510,10 +511,18 @@ mjx-container:not([display="true"]) {
   text-underline-offset: 3px;
 }
 
-/* Code blocks slightly larger */
-.presentation-deck .prose-presentation pre,
+/* Code blocks scale with presentation font base */
+.presentation-deck .prose-presentation pre {
+  font-size: calc(var(--presentation-font-base-size) * 0.75) !important; /* Code blocks smaller for readability */
+}
+
 .presentation-deck .prose-presentation code {
-  font-size: 0.95em;
+  font-size: calc(var(--presentation-font-base-size) * 0.85) !important; /* Inline code slightly larger than blocks */
+}
+
+/* Code blocks inside pre should follow pre size */
+.presentation-deck .prose-presentation pre code {
+  font-size: inherit !important; /* Inherit from parent pre */
 }
 
 /* Slide sections: reduce internal horizontal padding (Tailwind classes already set, this is a fine-tune) */
