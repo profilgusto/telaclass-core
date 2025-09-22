@@ -210,10 +210,14 @@
   margin-bottom: var(--space-lg);
 }
 
-/* Override for images inside figures to prevent double margins */
-.prose figure img {
-  margin-top: 0;
-  margin-bottom: 0;
+/* Override for images inside figures to prevent double margins
+   Increase specificity to beat `.prose img.mdx-img` so the caption
+   stays close to the image while figure keeps outer spacing. */
+.prose figure img,
+.prose figure img.mdx-img,
+.prose figure > img.mdx-img {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 }
 
 .prose pre { max-width: 100%; overflow-x: auto; }
@@ -588,10 +592,12 @@ mjx-container:not([display="true"]) {
   margin-bottom: 1.5rem;
 }
 
-/* Override for images inside figures in presentation mode */
-.presentation-deck .prose-presentation figure img {
-  margin-top: 0;
-  margin-bottom: 0;
+/* Override for images inside figures in presentation mode (ensure higher specificity) */
+.presentation-deck .prose-presentation figure img,
+.presentation-deck .prose-presentation figure img.mdx-img,
+.presentation-deck .prose-presentation figure > img.mdx-img {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 }
 
 /* Neutralize Slide wrapper in text mode so layout matches pre-segmentation */
