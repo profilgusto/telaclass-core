@@ -6,6 +6,9 @@ import { PresentOnly, TextOnly } from '@/components/presentation/Only'
 import { useViewMode } from '@/components/presentation/useViewMode'
 import VideoBase from '@/components/Video'
 import PDFBase from '@/components/PDF'
+import FileDownloadBase from '@/components/FileDownload'
+import FileDownloadButtonBase from '@/components/FileDownloadButton'
+import FileDownloadCardBase from '@/components/FileDownloadCard'
 
 export interface OverrideDeps {
   slug: string
@@ -102,7 +105,22 @@ export function useMdxOverrides({ slug, mod }: OverrideDeps) {
       const url = normalize(src)
       return <PDFBase src={url} {...rest} />
     }
-    return { audio: Audio, video: Video, Video: VideoUpper, PDF }
+    const FileDownload = (p: any) => {
+      const { src, ...rest } = p
+      const url = normalize(src)
+      return <FileDownloadBase src={url} {...rest} />
+    }
+    const FileDownloadButton = (p: any) => {
+      const { src, ...rest } = p
+      const url = normalize(src)
+      return <FileDownloadButtonBase src={url} {...rest} />
+    }
+    const FileDownloadCard = (p: any) => {
+      const { src, ...rest } = p
+      const url = normalize(src)
+      return <FileDownloadCardBase src={url} {...rest} />
+    }
+    return { audio: Audio, video: Video, Video: VideoUpper, PDF, FileDownload, FileDownloadButton, FileDownloadCard }
   }, [slug, mod])
 
   const Paragraph = useMemo(() => {

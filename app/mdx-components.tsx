@@ -6,6 +6,9 @@ import type { MDXComponents } from 'mdx/types';
 import CodeBlock from '@/components/code-block';
 import YouTube from '@/components/YouTube';
 import PDF from '@/components/PDF';
+import FileDownload from '@/components/FileDownload';
+import FileDownloadButton from '@/components/FileDownloadButton';
+import FileDownloadCard from '@/components/FileDownloadCard';
 
 // Helper: external link?
 const isExternal = (href?: string) =>
@@ -196,6 +199,11 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
 
   // PDF inline viewer <PDF src="..." title="wsm=100 wlg=80"/>
   PDF,
+
+  // File download banner/button
+  FileDownload,
+  FileDownloadButton,
+  FileDownloadCard,
 
 
     // Preserve user-provided overrides last

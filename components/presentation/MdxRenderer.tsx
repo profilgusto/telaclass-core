@@ -7,6 +7,7 @@ import Slide from '@/components/presentation/Slide'
 import { PresentOnly, TextOnly } from '@/components/presentation/Only'
 import { MDX_MANIFEST } from '@/content/mdx-manifest'
 import PDFBase from '@/components/PDF'
+import FileDownloadBase from '@/components/FileDownload'
 
 type Props = {
   manifestKey: string
@@ -124,7 +125,12 @@ export default function MdxRenderer({ manifestKey, slug, mod }: Props) {
       const url = normalize(src)
       return <PDFBase src={url} {...rest} />
     }
-    return { audio: Audio, video: Video, PDF }
+    const FileDownload = (p: any) => {
+      const { src, ...rest } = p
+      const url = normalize(src)
+      return <FileDownloadBase src={url} {...rest} />
+    }
+    return { audio: Audio, video: Video, PDF, FileDownload }
   }, [slug, mod])
 
   const components = useMemo(
