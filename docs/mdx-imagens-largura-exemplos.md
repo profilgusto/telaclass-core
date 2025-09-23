@@ -57,3 +57,27 @@ Observação: os valores são clampados entre 0 e 100.
 - Use `wlg` para evitar imagens muito grandes em telas largas (ex.: `wlg=60`).
 - Use `wsm` se quiser reduzir a imagem no mobile (ex.: `wsm=90`).
 - Se preferir escrever menos, use `size=SM,LG` (ex.: `size=100,60`).
+
+---
+
+## Visualizador de PDF em linha
+
+Você pode inserir PDFs diretamente no texto usando o componente `<PDF />`. Ele aceita os mesmos parâmetros de largura das imagens:
+
+- `wsm=NN` e `wlg=NN` para ajustar a largura no mobile/desktop (em % da largura da viewport), ou
+- `size=SM,LG` como atalho.
+
+Exemplos:
+
+```mdx
+<PDF src="pdf/relatorio.pdf" title="wsm=100 wlg=80" />
+```
+
+```mdx
+<PDF src="docs/procedimento.pdf" title="size=100,70" />
+```
+
+Notas:
+
+- Um botão “Baixar PDF” é exibido no canto superior direito do viewer.
+- A altura do quadro é automática (até 80vh/900px). A largura segue os parâmetros informados.

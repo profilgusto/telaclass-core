@@ -6,6 +6,7 @@ import SlideDeck from '@/components/presentation/SlideDeck'
 import Slide from '@/components/presentation/Slide'
 import { PresentOnly, TextOnly } from '@/components/presentation/Only'
 import { MDX_MANIFEST } from '@/content/mdx-manifest'
+import PDFBase from '@/components/PDF'
 
 type Props = {
   manifestKey: string
@@ -118,7 +119,12 @@ export default function MdxRenderer({ manifestKey, slug, mod }: Props) {
       const merged = ['block mx-auto my-8 w-full max-w-4xl aspect-video rounded-lg bg-black', className].filter(Boolean).join(' ')
       return <video src={normalize(src)} className={merged} {...rest} />
     }
-    return { audio: Audio, video: Video }
+    const PDF = (p: any) => {
+      const { src, ...rest } = p
+      const url = normalize(src)
+      return <PDFBase src={url} {...rest} />
+    }
+    return { audio: Audio, video: Video, PDF }
   }, [slug, mod])
 
   const components = useMemo(
@@ -165,7 +171,7 @@ export default function MdxRenderer({ manifestKey, slug, mod }: Props) {
       Slide,
       PresentOnly,
       TextOnly,
-      ...MediaResolvers
+  ...MediaResolvers
     }),
     [Img, A, MediaResolvers]
   )

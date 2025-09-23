@@ -5,6 +5,7 @@ import type { ComponentPropsWithoutRef } from 'react';
 import type { MDXComponents } from 'mdx/types';
 import CodeBlock from '@/components/code-block';
 import YouTube from '@/components/YouTube';
+import PDF from '@/components/PDF';
 
 // Helper: external link?
 const isExternal = (href?: string) =>
@@ -192,6 +193,9 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
 
   // Custom YouTube embed shortcut <YouTube url="..." />
   YouTube,
+
+  // PDF inline viewer <PDF src="..." title="wsm=100 wlg=80"/>
+  PDF,
 
 
     // Preserve user-provided overrides last

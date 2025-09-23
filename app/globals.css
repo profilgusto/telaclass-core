@@ -217,6 +217,19 @@
   margin-bottom: var(--space-lg);
 }
 
+/* PDF component sizing */
+.prose .mdx-pdf-container {
+  width: min(var(--mdx-pdf-wsm, 100%), 100%);
+  max-width: 100%;
+}
+@media (min-width: 768px) {
+  .prose .mdx-pdf-container {
+    width: min(var(--mdx-pdf-wlg, var(--mdx-pdf-wsm, 100%)), 100%);
+    max-width: 100%;
+  }
+}
+.prose .mdx-pdf-frame { height: min(80vh, 900px); }
+
 /* Override for images inside figures to prevent double margins
    Increase specificity to beat `.prose img.mdx-img` so the caption
    stays close to the image while figure keeps outer spacing. */

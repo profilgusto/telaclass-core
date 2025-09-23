@@ -5,6 +5,7 @@ import YouTube from '@/components/YouTube'
 import { PresentOnly, TextOnly } from '@/components/presentation/Only'
 import { useViewMode } from '@/components/presentation/useViewMode'
 import VideoBase from '@/components/Video'
+import PDFBase from '@/components/PDF'
 
 export interface OverrideDeps {
   slug: string
@@ -96,7 +97,12 @@ export function useMdxOverrides({ slug, mod }: OverrideDeps) {
       const url = normalize(src)
       return <VideoBase src={url} {...rest} />
     }
-    return { audio: Audio, video: Video, Video: VideoUpper }
+    const PDF = (p: any) => {
+      const { src, ...rest } = p
+      const url = normalize(src)
+      return <PDFBase src={url} {...rest} />
+    }
+    return { audio: Audio, video: Video, Video: VideoUpper, PDF }
   }, [slug, mod])
 
   const Paragraph = useMemo(() => {
