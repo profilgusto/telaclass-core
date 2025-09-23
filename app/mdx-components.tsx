@@ -7,8 +7,6 @@ import CodeBlock from '@/components/code-block';
 import YouTube from '@/components/YouTube';
 import PDF from '@/components/PDF';
 import FileDownload from '@/components/FileDownload';
-import FileDownloadButton from '@/components/FileDownloadButton';
-import FileDownloadCard from '@/components/FileDownloadCard';
 
 // Helper: external link?
 const isExternal = (href?: string) =>
@@ -67,7 +65,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
   h4: (p) => <h4 className="text-l font-semibold mt-4 mb-2" {...p} />, // styled same as h3 per request
 
     // Text
-    p: ({ children, ...rest }) => {
+  p: ({ children, ...rest }) => {
       // 1) If paragraph contains only an image → lift to figure with caption
       const kids = React.Children.toArray(children)
       if (kids.length === 1 && React.isValidElement(kids[0])) {
@@ -91,7 +89,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       }
 
       // 2) Otherwise, if paragraph has inline images alongside text, render them inline
-      const inlineKids = kids.map((node, idx) => {
+      const inlineKids = React.Children.toArray(kids).map((node, idx) => {
         if (!React.isValidElement(node)) return node
         const el: any = node
         const isHtmlImg = typeof el.type === 'string' && el.type === 'img'
@@ -103,7 +101,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         const m = typeof title === 'string' ? title.match(/(?:^|\s)ih=([0-9]*\.?[0-9]+)(?=\s|$)/i) : null
         const h = m ? `${m[1]}em` : '1em'
         const className = ['mdx-inline-img','inline-block','align-middle','mx-1','my-0'].join(' ')
-        return React.cloneElement(el, { className, style: { ...(el.props?.style || {}), height: h, width: 'auto' } })
+        return React.cloneElement(el, { className, style: { ...(el.props?.style || {}), height: h, width: 'auto' }, key: (el.key ?? `inline-img-${idx}`) })
       })
 
       return <p className="last:mb-0" {...rest}>{inlineKids}</p>
@@ -202,8 +200,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
 
   // File download banner/button
   FileDownload,
-  FileDownloadButton,
-  FileDownloadCard,
 
 
     // Preserve user-provided overrides last

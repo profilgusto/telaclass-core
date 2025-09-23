@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useMemo, cloneElement } from 'react'
+import React, { useEffect, useState, useMemo, cloneElement } from 'react'
 import { MDXProvider } from '@mdx-js/react'
 import SlideDeck from '@/components/presentation/SlideDeck'
 import Slide from '@/components/presentation/Slide'
@@ -137,7 +137,7 @@ export default function MdxRenderer({ manifestKey, slug, mod }: Props) {
     () => ({
       // Unwrap <p><figure/></p> produced by MDX so figure is not inside paragraph
       p: ({ children, ...rest }: any) => {
-        const arr = Array.isArray(children) ? children : [children]
+  const arr = Array.isArray(children) ? React.Children.toArray(children) : React.Children.toArray([children])
         if (arr.length === 1 && arr[0] && typeof arr[0] === 'object') {
           const el: any = arr[0]
           const isHtmlImg = el.type === 'img'
@@ -158,7 +158,7 @@ export default function MdxRenderer({ manifestKey, slug, mod }: Props) {
           }
         }
         // Inline images within text: convert any image-like children to inline icons
-        const inlineKids = arr.map((node) => {
+        const inlineKids = arr.map((node, idx) => {
           if (!node || typeof node !== 'object') return node
           const el: any = node
           const isHtmlImg = el.type === 'img'
@@ -168,7 +168,7 @@ export default function MdxRenderer({ manifestKey, slug, mod }: Props) {
           const title: string | undefined = el.props?.title
           const m = typeof title === 'string' ? title.match(/(?:^|\s)ih=([0-9]*\.?[0-9]+)(?=\s|$)/i) : null
           const ih = m ? m[1] : undefined
-          return cloneElement(el, { 'data-inline': true, 'data-ih': ih })
+          return cloneElement(el, { 'data-inline': true, 'data-ih': ih, key: (el.key ?? `inline-img-${idx}`) })
         })
         return <p className={['leading-7','mb-4','last:mb-0', rest.className].filter(Boolean).join(' ')} {...rest}>{inlineKids}</p>
       },

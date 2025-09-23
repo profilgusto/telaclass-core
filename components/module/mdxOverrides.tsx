@@ -7,8 +7,6 @@ import { useViewMode } from '@/components/presentation/useViewMode'
 import VideoBase from '@/components/Video'
 import PDFBase from '@/components/PDF'
 import FileDownloadBase from '@/components/FileDownload'
-import FileDownloadButtonBase from '@/components/FileDownloadButton'
-import FileDownloadCardBase from '@/components/FileDownloadCard'
 
 export interface OverrideDeps {
   slug: string
@@ -110,22 +108,12 @@ export function useMdxOverrides({ slug, mod }: OverrideDeps) {
       const url = normalize(src)
       return <FileDownloadBase src={url} {...rest} />
     }
-    const FileDownloadButton = (p: any) => {
-      const { src, ...rest } = p
-      const url = normalize(src)
-      return <FileDownloadButtonBase src={url} {...rest} />
-    }
-    const FileDownloadCard = (p: any) => {
-      const { src, ...rest } = p
-      const url = normalize(src)
-      return <FileDownloadCardBase src={url} {...rest} />
-    }
-    return { audio: Audio, video: Video, Video: VideoUpper, PDF, FileDownload, FileDownloadButton, FileDownloadCard }
+    return { audio: Audio, video: Video, Video: VideoUpper, PDF, FileDownload }
   }, [slug, mod])
 
   const Paragraph = useMemo(() => {
     return function P({ children, ...rest }: any) {
-      const arr = Array.isArray(children) ? children : [children]
+  const arr = React.Children.toArray(children)
       if (arr.length === 1 && arr[0] && typeof arr[0] === 'object') {
         const el: any = arr[0]
         const isHtmlImg = el.type === 'img'
