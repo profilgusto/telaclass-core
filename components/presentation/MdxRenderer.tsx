@@ -49,7 +49,16 @@ export default function MdxRenderer({ manifestKey, slug, mod }: Props) {
         ? s
         : `/disciplinas/${encodeURIComponent(slug)}/${encodeURIComponent(mod)}/${encoded}`
 
-  // Return plain img; paragraph override will convert to figure if needed
+  // Inline mode signaled by paragraph when mixing text + images
+  const isInline = !!(rest as any)['data-inline']
+  if (isInline) {
+    const dataIh = (rest as any)['data-ih'] as string | undefined
+    const h = dataIh ? `${dataIh}em` : '1em'
+    const inlineCls = ['mdx-inline-img','inline-block','align-middle','mx-1','my-0', rest.className].filter(Boolean).join(' ')
+    const { className, ...others } = rest
+    return <img src={url} alt={alt} className={inlineCls} style={{ ...(rest as any).style, height: h, width: 'auto' }} {...others} />
+  }
+  // Return plain img; paragraph override may convert sole image to figure
   const { className, ...others } = rest
   const merged = ['mx-auto','block', className].filter(Boolean).join(' ')
   return <img src={url} alt={alt} className={merged} {...others} />
@@ -136,7 +145,20 @@ export default function MdxRenderer({ manifestKey, slug, mod }: Props) {
             return cloneElement(el, { className: base })
           }
         }
-        return <p className={['leading-7','mb-4','last:mb-0', rest.className].filter(Boolean).join(' ')} {...rest}>{children}</p>
+        // Inline images within text: convert any image-like children to inline icons
+        const inlineKids = arr.map((node) => {
+          if (!node || typeof node !== 'object') return node
+          const el: any = node
+          const isHtmlImg = el.type === 'img'
+          const isImgComponent = typeof el.type === 'function' && /Img/i.test(el.type.name || '')
+          const seemsImage = (el.props && (el.props.src || isHtmlImg || isImgComponent))
+          if (!(isHtmlImg || isImgComponent || seemsImage)) return node
+          const title: string | undefined = el.props?.title
+          const m = typeof title === 'string' ? title.match(/(?:^|\s)ih=([0-9]*\.?[0-9]+)(?=\s|$)/i) : null
+          const ih = m ? m[1] : undefined
+          return cloneElement(el, { 'data-inline': true, 'data-ih': ih })
+        })
+        return <p className={['leading-7','mb-4','last:mb-0', rest.className].filter(Boolean).join(' ')} {...rest}>{inlineKids}</p>
       },
       img: Img,
       a: A,

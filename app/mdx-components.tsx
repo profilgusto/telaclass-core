@@ -64,7 +64,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
 
     // Text
     p: ({ children, ...rest }) => {
-      // Transform <p><img|Img alt="..."/></p> → <figure>...</figure>
+      // 1) If paragraph contains only an image → lift to figure with caption
       const kids = React.Children.toArray(children)
       if (kids.length === 1 && React.isValidElement(kids[0])) {
         const el: any = kids[0]
@@ -74,18 +74,35 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         if (isHtmlImg || isImgComponent || seemsImage) {
           const alt = el.props?.alt
           const mergedClass = ['mx-auto','block', el.props?.className].filter(Boolean).join(' ')
-            if (alt) {
-              return (
-                <figure className="my-6 flex flex-col items-center text-center">
-                  {React.cloneElement(el, { className: mergedClass })}
-                  <figcaption className="mt-2 text-sm text-muted-foreground max-w-prose">{alt}</figcaption>
-                </figure>
-              )
-            }
-            return React.cloneElement(el, { className: mergedClass })
+          if (alt) {
+            return (
+              <figure className="my-6 flex flex-col items-center text-center">
+                {React.cloneElement(el, { className: mergedClass })}
+                <figcaption className="mt-2 text-sm text-muted-foreground max-w-prose">{alt}</figcaption>
+              </figure>
+            )
+          }
+          return React.cloneElement(el, { className: mergedClass })
         }
       }
-      return <p className="last:mb-0" {...rest}>{children}</p>
+
+      // 2) Otherwise, if paragraph has inline images alongside text, render them inline
+      const inlineKids = kids.map((node, idx) => {
+        if (!React.isValidElement(node)) return node
+        const el: any = node
+        const isHtmlImg = typeof el.type === 'string' && el.type === 'img'
+        const isImgComponent = typeof el.type === 'function' && /Img/i.test(el.type.name || '')
+        const seemsImage = (el.props && (el.props.src || isHtmlImg || isImgComponent))
+        if (!(isHtmlImg || isImgComponent || seemsImage)) return node
+        // Inline image style: small, aligned to text, no block margins
+        const title: string | undefined = el.props?.title
+        const m = typeof title === 'string' ? title.match(/(?:^|\s)ih=([0-9]*\.?[0-9]+)(?=\s|$)/i) : null
+        const h = m ? `${m[1]}em` : '1em'
+        const className = ['mdx-inline-img','inline-block','align-middle','mx-1','my-0'].join(' ')
+        return React.cloneElement(el, { className, style: { ...(el.props?.style || {}), height: h, width: 'auto' } })
+      })
+
+      return <p className="last:mb-0" {...rest}>{inlineKids}</p>
     },
     strong: (p) => <strong className="font-semibold" {...p} />,
     em: (p) => <em className="italic" {...p} />,

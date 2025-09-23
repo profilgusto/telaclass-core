@@ -20,6 +20,16 @@ export function useMdxOverrides({ slug, mod }: OverrideDeps) {
       const encoded = normalized.split('/').map(encodeURIComponent).join('/')
       const url = isAbsolute ? s : `/disciplinas/${encodeURIComponent(slug)}/${encodeURIComponent(mod)}/${encoded}`
       const { className, title, style, ...others } = rest
+      // Inline mode (triggered by paragraph when mixing text + images)
+      const isInline = !!(rest as any)['data-inline']
+      if (isInline) {
+        // height in em units via title: "ih=1.2" or via data-ih
+        const dataIh = (rest as any)['data-ih'] as string | undefined
+        const m = dataIh ? [null, dataIh] : (typeof title === 'string' ? title.match(/(?:^|\s)ih=([0-9]*\.?[0-9]+)(?=\s|$)/i) : null)
+        const h = m ? `${m[1]}em` : '1em'
+        const inlineCls = ['mdx-inline-img','inline-block','align-middle','mx-1','my-0', className].filter(Boolean).join(' ')
+        return <img src={url} alt={alt} className={inlineCls} style={{ ...(style||{}), height: h, width: 'auto' }} {...others} />
+      }
       // Parse optional widths from title: e.g., "wsm=100 wlg=60" (percent of viewport width)
       let wsm: number | undefined
       let wlg: number | undefined
@@ -109,7 +119,20 @@ export function useMdxOverrides({ slug, mod }: OverrideDeps) {
           return cloneElement(el, { className: base })
         }
       }
-      return <p className={['last:mb-0', rest.className].filter(Boolean).join(' ')} {...rest}>{children}</p>
+      // Inline images within text: convert any image-like children to inline icons
+      const inlineKids = arr.map((node) => {
+        if (!node || typeof node !== 'object') return node
+        const el: any = node
+        const isHtmlImg = el.type === 'img'
+        const isImgComponent = typeof el.type === 'function' && /Img/i.test(el.type.name || '')
+        const seemsImage = (el.props && (el.props.src || isHtmlImg || isImgComponent))
+        if (!(isHtmlImg || isImgComponent || seemsImage)) return node
+        const title: string | undefined = el.props?.title
+        const m = typeof title === 'string' ? title.match(/(?:^|\s)ih=([0-9]*\.?[0-9]+)(?=\s|$)/i) : null
+        const ih = m ? m[1] : undefined
+        return cloneElement(el, { 'data-inline': true, 'data-ih': ih })
+      })
+      return <p className={['last:mb-0', rest.className].filter(Boolean).join(' ')} {...rest}>{inlineKids}</p>
     }
   }, [])
 

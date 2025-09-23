@@ -191,6 +191,13 @@
   .prose img.mdx-img { width: var(--mdx-img-wlg, var(--mdx-img-wsm, auto)); }
 }
 
+/* Inline images (icons) inside text paragraphs */
+.prose img.mdx-inline-img {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  vertical-align: middle;
+}
+
 /* Image margins: ensure standalone images (not in figures) have proper spacing */
 .prose img:not(figure img) {
   margin-top: var(--space-lg);
