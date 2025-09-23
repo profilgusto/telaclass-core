@@ -4,6 +4,7 @@ import Slide from '@/components/presentation/Slide'
 import YouTube from '@/components/YouTube'
 import { PresentOnly, TextOnly } from '@/components/presentation/Only'
 import { useViewMode } from '@/components/presentation/useViewMode'
+import VideoBase from '@/components/Video'
 
 export interface OverrideDeps {
   slug: string
@@ -79,7 +80,13 @@ export function useMdxOverrides({ slug, mod }: OverrideDeps) {
       const merged = ['block mx-auto my-8 w-full max-w-4xl aspect-video rounded-lg bg-black', className].filter(Boolean).join(' ')
       return <video src={normalize(src)} className={merged} {...rest} />
     }
-    return { audio: Audio, video: Video }
+    // Uppercase component for MDX usage: <Video src="videos/foo.mp4" />
+    const VideoUpper = (p: any) => {
+      const { src, ...rest } = p
+      const url = normalize(src)
+      return <VideoBase src={url} {...rest} />
+    }
+    return { audio: Audio, video: Video, Video: VideoUpper }
   }, [slug, mod])
 
   const Paragraph = useMemo(() => {

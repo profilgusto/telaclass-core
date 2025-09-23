@@ -100,19 +100,8 @@ export async function GET(
     const lastMod = new Date(st.mtimeMs).toUTCString();
     const prod = process.env.NODE_ENV === 'production';
 
-    // 304
-    const inm = req.headers.get('if-none-match');
-    const ims = req.headers.get('if-modified-since');
-    if ((inm && inm === tag) || (ims && new Date(ims) >= new Date(lastMod))) {
-      const h = new Headers({
-        'ETag': tag,
-        'Last-Modified': lastMod,
-        'Cache-Control': cacheFor(m, prod),
-      });
-      return new NextResponse(null, { status: 304, headers: h });
-    }
-
-    // Range (vídeo/áudio/pdf)
+    // Range (vídeo/áudio/pdf) — must take precedence over 304 checks
+    // Some browsers send conditional headers along with Range; returning 304 here breaks playback.
     const range = req.headers.get('range');
     if (range) {
       const match = /bytes=(\d*)-(\d*)/.exec(range);
@@ -137,6 +126,18 @@ export async function GET(
       return new NextResponse('Range Not Satisfiable', { status: 416, headers: h });
     }
 
+    // 304 for non-range requests
+    const inm = req.headers.get('if-none-match');
+    const ims = req.headers.get('if-modified-since');
+    if ((inm && inm === tag) || (ims && new Date(ims) >= new Date(lastMod))) {
+      const h = new Headers({
+        'ETag': tag,
+        'Last-Modified': lastMod,
+        'Cache-Control': cacheFor(m, prod),
+      });
+      return new NextResponse(null, { status: 304, headers: h });
+    }
+
     // Conteúdo completo
     if (st.size < 5 * 1024 * 1024) {
       const buf = await fsp.readFile(filePath);
@@ -151,7 +152,7 @@ export async function GET(
       // Buffer -> Uint8Array to satisfy BodyInit typing in Next.js (TS) during build
       return new NextResponse(new Uint8Array(buf), { status: 200, headers: h });
     } else {
-      const stream = fs.createReadStream(filePath);
+  const stream = fs.createReadStream(filePath);
       const h = new Headers({
         'Content-Type': m,
         'Content-Length': String(st.size),
