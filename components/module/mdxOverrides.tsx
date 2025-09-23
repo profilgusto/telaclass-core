@@ -113,36 +113,88 @@ export function useMdxOverrides({ slug, mod }: OverrideDeps) {
 
   const Paragraph = useMemo(() => {
     return function P({ children, ...rest }: any) {
-  const arr = React.Children.toArray(children)
+      const arr = React.Children.toArray(children)
+
+      // Helpers
+      const isImageLike = (el: any) => {
+        const isHtmlImg = el?.type === 'img'
+        const isImgComponent = typeof el?.type === 'function' && /Img/i.test(el.type.name || '')
+        const seemsImage = !!(el?.props && (el.props.src || isHtmlImg || isImgComponent))
+        return isHtmlImg || isImgComponent || seemsImage
+      }
+      const isBlockLike = (el: any) => {
+        if (!el || typeof el !== 'object') return false
+        const t = el.type
+        // Known block components that render <div>/<iframe>/<section> etc.
+        if (t === YouTube || t === VideoBase || t === PDFBase || t === FileDownloadBase) return true
+        const name = typeof t === 'function' ? (t as any).name : ''
+        if (typeof t === 'string') return ['div','section','iframe','figure','video','audio'].includes(t)
+        return /YouTube|Video|PDF|FileDownload/.test(name || '')
+      }
+
+      // Single media/image paragraph transformation
       if (arr.length === 1 && arr[0] && typeof arr[0] === 'object') {
         const el: any = arr[0]
-        const isHtmlImg = el.type === 'img'
-        const isImgComponent = typeof el.type === 'function' && /Img/i.test(el.type.name || '')
-        const seemsImage = (el.props && typeof el.props.alt === 'string' && (el.props.src || isHtmlImg || isImgComponent))
-        if (isHtmlImg || isImgComponent || seemsImage) {
+        // Single block element? Return it directly, do not wrap in <p>
+        if (isBlockLike(el)) return el
+        // Single image gets upgraded to <figure> with optional caption from alt
+        if (isImageLike(el)) {
           const alt = el.props?.alt
           const base = ['mx-auto','block','max-w-full','h-auto', el.props.className].filter(Boolean).join(' ')
-          if (alt) return (
-            <figure className="my-6 flex flex-col items-center text-center">
-              {cloneElement(el, { className: base })}
-              <figcaption className="mt-2 text-sm opacity-80 max-w-prose">{alt}</figcaption>
-            </figure>
-          )
+          if (alt) {
+            return (
+              <figure className="my-6 flex flex-col items-center text-center">
+                {cloneElement(el, { className: base })}
+                <figcaption className="mt-2 text-sm opacity-80 max-w-prose">{alt}</figcaption>
+              </figure>
+            )
+          }
           return cloneElement(el, { className: base })
         }
       }
+
+      // If this paragraph mixes text with block components, split into multiple blocks
+      const containsBlock = arr.some((n) => typeof n === 'object' && isBlockLike(n as any))
+      if (containsBlock) {
+        const out: React.ReactNode[] = []
+        let buffer: React.ReactNode[] = []
+        const flush = () => {
+          if (buffer.length) {
+            out.push(
+              <p key={`p-${out.length}`} className={['last:mb-0', rest.className].filter(Boolean).join(' ')} {...rest}>
+                {buffer}
+              </p>
+            )
+            buffer = []
+          }
+        }
+        arr.forEach((node, idx) => {
+          if (typeof node === 'object' && isBlockLike(node as any)) {
+            flush()
+            out.push(cloneElement(node as any, { key: `block-${idx}` }))
+          } else if (typeof node === 'object' && isImageLike(node as any)) {
+            const el: any = node
+            const title: string | undefined = el.props?.title
+            const m = typeof title === 'string' ? title.match(/(?:^|\s)ih=([0-9]*\.?[0-9]+)(?=\s|$)/i) : null
+            const ih = m ? m[1] : undefined
+            buffer.push(cloneElement(el, { 'data-inline': true, 'data-ih': ih, key: `img-${idx}` }))
+          } else {
+            buffer.push(node)
+          }
+        })
+        flush()
+        return <>{out}</>
+      }
+
       // Inline images within text: convert any image-like children to inline icons
-      const inlineKids = arr.map((node) => {
+      const inlineKids = arr.map((node, idx) => {
         if (!node || typeof node !== 'object') return node
         const el: any = node
-        const isHtmlImg = el.type === 'img'
-        const isImgComponent = typeof el.type === 'function' && /Img/i.test(el.type.name || '')
-        const seemsImage = (el.props && (el.props.src || isHtmlImg || isImgComponent))
-        if (!(isHtmlImg || isImgComponent || seemsImage)) return node
+        if (!isImageLike(el)) return node
         const title: string | undefined = el.props?.title
         const m = typeof title === 'string' ? title.match(/(?:^|\s)ih=([0-9]*\.?[0-9]+)(?=\s|$)/i) : null
         const ih = m ? m[1] : undefined
-        return cloneElement(el, { 'data-inline': true, 'data-ih': ih })
+        return cloneElement(el, { 'data-inline': true, 'data-ih': ih, key: `img-inline-${idx}` })
       })
       return <p className={['last:mb-0', rest.className].filter(Boolean).join(' ')} {...rest}>{inlineKids}</p>
     }
