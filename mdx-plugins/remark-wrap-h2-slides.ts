@@ -1,5 +1,5 @@
 // remark-wrap-h2-slides.ts
-// (Agora também quebra em h3)
+// (Agora também quebra em h3 e h4)
 // Split the top-level flow into <Slide data-id="..."> segments:
 // 1. Intro segment: any nodes before the first level-2/3 heading (h2/h3)
 // 2. Each h2 OR h3 + following nodes until the next h2/h3 (or explicit marker)
@@ -27,8 +27,8 @@ const remarkWrapH2Slides: Plugin = () => {
     const kids = root.children || []
     if (!kids.length) return
 
-  // Quick scan: does it even have an h2 or h3? If not, do nothing (single flow).
-  const hasBreakHeading = kids.some(n => n.type === 'heading' && (n.depth === 2 || n.depth === 3))
+  // Quick scan: does it even have an h2, h3 or h4? If not, do nothing (single flow).
+  const hasBreakHeading = kids.some(n => n.type === 'heading' && (n.depth === 2 || n.depth === 3 || n.depth === 4))
   if (!hasBreakHeading) return
 
     // Build segments
@@ -46,7 +46,7 @@ const remarkWrapH2Slides: Plugin = () => {
     }
 
     for (const n of kids) {
-      if ((n.type === 'heading' && (n.depth === 2 || n.depth === 3)) || isSlideBreak(n)) {
+      if ((n.type === 'heading' && (n.depth === 2 || n.depth === 3 || n.depth === 4)) || isSlideBreak(n)) {
         // finalize previous
         push()
         if (isSlideBreak(n)) {
@@ -64,10 +64,11 @@ const remarkWrapH2Slides: Plugin = () => {
     const out: Node[] = []
     const used = new Set<string>()
     segments.forEach((seg, idx) => {
-      // Prefer h2, then h1, then h3 for id generation (so nested subsections get stable ids)
+      // Prefer h2, then h1, then h3, then h4 for id generation (so nested subsections get stable ids)
       let heading = seg.find(n => n.type === 'heading' && n.depth === 2)
         || seg.find(n => n.type === 'heading' && n.depth === 1)
         || seg.find(n => n.type === 'heading' && n.depth === 3)
+        || seg.find(n => n.type === 'heading' && n.depth === 4)
       let text = heading ? toString(heading).trim() : (idx === 0 ? 'introducao' : `slide-${idx+1}`)
       let base = slugify(text) || `slide-${idx+1}`
       let id = base

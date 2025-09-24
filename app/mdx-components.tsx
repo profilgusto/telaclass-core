@@ -62,7 +62,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       <h3 className="text-xl font-bold mt-2 mb-2" {...p} />
     </>
   ),
-  h4: (p) => <h4 className="text-l font-semibold mt-4 mb-2" {...p} />, // styled same as h3 per request
+  h4: (p) => <h4 className="text-l font-semibold mt-6 mb-2" {...p} />, // larger top margin before H4
 
     // Text
   p: ({ children, ...rest }) => {
