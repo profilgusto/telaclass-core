@@ -1,6 +1,6 @@
 'use client'
 
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useEffect, useRef, useState } from 'react'
 import { useViewMode } from './useViewMode'
 
 interface SlideLayoutProps {
@@ -112,7 +112,7 @@ export function VerticalLayout({ children }: { children: ReactNode }) {
   )
 }
 
-// Function to override image sizing for horizontal layout
+// Function to override image sizing for horizontal layout with viewport adaptation
 function overrideImageSizing(imageElements: ReactNode[]): ReactNode[] {
   return imageElements.map((element, index) => {
     if (!React.isValidElement(element)) return element
@@ -129,13 +129,16 @@ function overrideImageSizing(imageElements: ReactNode[]): ReactNode[] {
           ...(elem.props as any),
           className: [
             (elem.props as any)?.className,
-            'w-full max-w-full h-auto'
+            'w-full max-w-full h-auto object-contain adaptive-image'
           ].filter(Boolean).join(' '),
           style: {
             ...(elem.props as any)?.style,
             width: '100%',
             maxWidth: '100%',
-            height: 'auto'
+            height: 'auto',
+            maxHeight: '70vh',
+            objectFit: 'contain',
+            display: 'block'
           }
         })
       }
@@ -179,17 +182,17 @@ export function HorizontalLayout({ children }: { children: ReactNode }) {
       )}
       
       {/* Content section - two columns */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 min-h-[40vh] items-start">
-        <div className="slide-text-content space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start max-h-[75vh] overflow-hidden">
+        <div className="slide-text-content space-y-4 overflow-y-auto pr-2 max-h-[70vh]">
           {textContent.length > 0 ? textContent : (
             <div className="text-center text-gray-400 italic">
               [Conteúdo de texto aqui]
             </div>
           )}
         </div>
-        <div className="slide-image-content flex flex-col justify-center space-y-4">
+        <div className="slide-image-content flex flex-col justify-center space-y-4 max-h-[70vh] overflow-hidden">
           {overriddenImages.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-4 flex flex-col justify-center h-full max-h-[70vh]">
               {overriddenImages}
             </div>
           ) : (

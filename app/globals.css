@@ -660,3 +660,26 @@ mjx-container:not([display="true"]) {
 .prose table tbody tr:hover { background: var(--table-row-hover); }
 /* Fallback if no thead present: style first row */
 .prose table:not(:has(thead)) tr:first-child { background: var(--table-head-bg); font-weight:600; }
+
+/* Adaptive images for slide layout */
+.slide-layout-horizontal .adaptive-image,
+.slide-layout-horizontal img,
+.slide-layout-horizontal figure img,
+.slide-layout-horizontal div img {
+  max-height: 70vh !important;
+  max-width: 100% !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+.slide-layout-horizontal .slide-image-content {
+  max-height: 70vh !important;
+  overflow: hidden !important;
+}
+
+.slide-layout-horizontal .slide-image-content > div {
+  max-height: 70vh !important;
+  overflow: hidden !important;
+}
