@@ -34,7 +34,15 @@ const remarkWrapH2Slides: Plugin = () => {
     // Build segments
     const segments: Node[][] = []
     let current: Node[] = []
-    const push = () => { if (current.length) { segments.push(current); current = [] } }
+    let currentLayout = '1' // Default layout
+    const segmentLayouts: string[] = [] // Track layout for each segment
+    const push = () => { 
+      if (current.length) { 
+        segments.push(current)
+        segmentLayouts.push(currentLayout)
+        current = [] 
+      } 
+    }
 
     function isSlideBreak(n: Node): boolean {
       // Our custom delimiter: paragraph whose plain text is exactly '---sldbrk'
@@ -45,7 +53,30 @@ const remarkWrapH2Slides: Plugin = () => {
       return false
     }
 
+    function isLayoutCommand(n: Node): { isLayout: boolean; layout?: string } {
+      // Detect layout commands: paragraph whose plain text is exactly '---sldlayout1', '---sldlayout2', etc.
+      if (n.type === 'paragraph' && Array.isArray(n.children) && n.children.length === 1) {
+        const c = n.children[0]
+        if (c.type === 'text' && c.value) {
+          const trimmed = c.value.trim()
+          const match = trimmed.match(/^---sldlayout(\d+)$/)
+          if (match) {
+            return { isLayout: true, layout: match[1] }
+          }
+        }
+      }
+      return { isLayout: false }
+    }
+
     for (const n of kids) {
+      const layoutCheck = isLayoutCommand(n)
+      
+      if (layoutCheck.isLayout) {
+        // Layout command: update current layout and discard the command node
+        currentLayout = layoutCheck.layout || '1'
+        continue
+      }
+      
       if ((n.type === 'heading' && (n.depth === 2 || n.depth === 3 || n.depth === 4)) || isSlideBreak(n)) {
         // finalize previous
         push()
@@ -75,11 +106,15 @@ const remarkWrapH2Slides: Plugin = () => {
       let counter = 2
       while (used.has(id)) { id = `${base}-${counter++}` }
       used.add(id)
+      
+      const layout = segmentLayouts[idx] || '1'
+      
       out.push({
         type: 'mdxJsxFlowElement',
         name: 'Slide',
         attributes: [
-          { type: 'mdxJsxAttribute', name: 'data-id', value: id }
+          { type: 'mdxJsxAttribute', name: 'data-id', value: id },
+          { type: 'mdxJsxAttribute', name: 'data-layout', value: layout }
         ],
         children: seg,
       })
