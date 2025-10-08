@@ -1,0 +1,50 @@
+# Teste de Override de Largura
+
+## Slide 1 - Layout Padrão (Vertical)
+
+Esta imagem deve manter sua largura definida (80% mobile, 50% desktop):
+
+![](scada-overview.png "size=80,50")
+
+---sldbrk
+
+---sldlayout2
+
+## Slide 2 - Layout Horizontal com Override
+
+Esta imagem deve ignorar o `size=80,50` e ocupar 100% da coluna direita:
+
+![](scada-overview.png "size=80,50")
+
+**Características esperadas:**
+- A imagem deve ocupar 100% da largura da coluna direita
+- O override ignora completamente as configurações `size=80,50`
+- Mantém aspect ratio original da imagem
+
+---sldbrk
+
+## Slide 3 - Múltiplas Imagens com Override
+
+Todas as imagens devem ocupar 100% da coluna direita:
+
+![](diagrama1.png "size=60,40")
+![](diagrama2.png "size=90,70")
+
+**Teste de múltiplas imagens:**
+- Cada imagem deve ter 100% da largura disponível
+- Configurações originais (`size=60,40` e `size=90,70`) devem ser ignoradas
+- Imagens ficam empilhadas verticalmente
+
+---sldbrk
+
+---sldlayout1
+
+## Slide 4 - Volta ao Layout Vertical
+
+Esta imagem volta a respeitar as configurações originais:
+
+![](scada-overview.png "size=80,50")
+
+Agora a imagem deve ter 80% no mobile e 50% no desktop, conforme especificado.
+
+---sldbrk

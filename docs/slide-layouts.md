@@ -43,12 +43,14 @@ Este slide usará o layout horizontal.
 - Texto e imagens são renderizados sequencialmente na vertical
 - Comportamento tradicional dos slides
 - Usado por padrão quando nenhum layout é especificado
+- **Respeita configurações de largura** das imagens (`size=80,50`)
 
 ### Layout 2 - Horizontal
 - Divide o slide em duas colunas
 - Texto fica na coluna da esquerda
 - Imagens ficam na coluna da direita
 - Layout responsivo (em telas pequenas volta para vertical)
+- **🎯 OVERRIDE DE LARGURA**: Imagens sempre ocupam 100% da largura da coluna direita, ignorando configurações `size=X,Y`
 
 ## Detecção de Imagens
 
@@ -61,21 +63,26 @@ O sistema automaticamente identifica e separa:
 ## Exemplo Completo
 
 ```mdx
+## Exemplo Completo
+
+```mdx
 # Apresentação sobre SCADA
 
 ## Introdução
 <!-- Este slide usa layout padrão (vertical) -->
+<!-- Imagem mantém configuração original: 80% mobile, 50% desktop -->
 
 SCADA significa Supervisory Control and Data Acquisition.
 
-![](intro-scada.png "Introdução ao SCADA")
+![](intro-scada.png "size=80,50")
 
 ---sldbrk
 
 ---sldlayout2
 
 ## Arquitetura do Sistema
-<!-- Este e os próximos slides usarão layout horizontal -->
+<!-- Este slide usa layout horizontal -->
+<!-- Imagem IGNORA size=60,40 e ocupa 100% da coluna direita -->
 
 O sistema SCADA possui os seguintes componentes:
 
@@ -84,13 +91,14 @@ O sistema SCADA possui os seguintes componentes:
 - Sistema de comunicação
 - Centro de controle
 
-![](arquitetura.png "Arquitetura SCADA")
-![](componentes.png "Componentes do sistema")
+![](arquitetura.png "size=60,40")
+![](componentes.png "size=90,70")
 
 ---sldbrk
 
 ## Benefícios
 <!-- Continua usando layout horizontal -->
+<!-- Override de largura continua ativo -->
 
 Principais vantagens do SCADA:
 
@@ -99,7 +107,7 @@ Principais vantagens do SCADA:
 - Histórico de dados
 - Alarmes e notificações
 
-![](beneficios.png "Benefícios do SCADA")
+![](beneficios.png "size=30,20")
 
 ---sldbrk
 
@@ -107,10 +115,40 @@ Principais vantagens do SCADA:
 
 ## Conclusão
 <!-- Volta para o layout vertical -->
+<!-- Imagem volta a respeitar size=80,50 -->
 
 O SCADA é essencial para automação industrial moderna.
 
-![](conclusao.png "Conclusão")
+![](conclusao.png "size=80,50")
+```
+
+## Override de Largura no Layout Horizontal
+
+### 🎯 **Funcionalidade Especial**
+
+No **Layout 2 (Horizontal)**, todas as imagens na coluna direita:
+
+- ✅ **Ignoram** configurações `size=X,Y` do MDX
+- ✅ **Ocupam 100%** da largura da coluna direita
+- ✅ **Mantêm** aspect ratio original
+- ✅ **Empilham** verticalmente se múltiplas imagens
+
+### 📊 **Comparação de Comportamento**
+
+| Layout | Configuração MDX | Resultado |
+|--------|------------------|-----------|
+| Layout 1 (Vertical) | `size=80,50` | 80% mobile, 50% desktop |
+| Layout 2 (Horizontal) | `size=80,50` | **100% da coluna direita** |
+| Layout 1 (Vertical) | `size=60,40` | 60% mobile, 40% desktop |
+| Layout 2 (Horizontal) | `size=60,40` | **100% da coluna direita** |
+
+### 🔧 **Implementação Técnica**
+
+O override funciona recursivamente, aplicando:
+- `width: 100%`
+- `max-width: 100%` 
+- `height: auto`
+- Classes Tailwind: `w-full max-w-full h-auto`
 ```
 
 ## Notas Técnicas

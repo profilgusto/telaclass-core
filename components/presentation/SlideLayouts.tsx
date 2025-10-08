@@ -112,9 +112,62 @@ export function VerticalLayout({ children }: { children: ReactNode }) {
   )
 }
 
+// Function to override image sizing for horizontal layout
+function overrideImageSizing(imageElements: ReactNode[]): ReactNode[] {
+  return imageElements.map((element, index) => {
+    if (!React.isValidElement(element)) return element
+    
+    // Function to recursively apply width override to image elements
+    function applyWidthOverride(elem: React.ReactElement): React.ReactElement {
+      // If it's an img element or has image-related props, override its sizing
+      const isImageElement = 
+        elem.type === 'img' ||
+        (elem.props && ((elem.props as any).src || (elem.props as any).alt))
+      
+      if (isImageElement) {
+        return React.cloneElement(elem as any, {
+          ...(elem.props as any),
+          className: [
+            (elem.props as any)?.className,
+            'w-full max-w-full h-auto'
+          ].filter(Boolean).join(' '),
+          style: {
+            ...(elem.props as any)?.style,
+            width: '100%',
+            maxWidth: '100%',
+            height: 'auto'
+          }
+        })
+      }
+      
+      // If it has children, recursively apply to children
+      if (elem.props && (elem.props as any).children) {
+        const updatedChildren = React.Children.map((elem.props as any).children, (child) => {
+          if (React.isValidElement(child)) {
+            return applyWidthOverride(child)
+          }
+          return child
+        })
+        
+        return React.cloneElement(elem as any, {
+          ...(elem.props as any),
+          children: updatedChildren
+        })
+      }
+      
+      return elem
+    }
+    
+    return applyWidthOverride(element as React.ReactElement)
+  })
+}
+
 // Layout 2: Horizontal split layout (text left, images right)
 export function HorizontalLayout({ children }: { children: ReactNode }) {
   const { titleContent, textContent, imageContent } = splitContentByType(children)
+  
+  // Override image sizing for horizontal layout
+  const overriddenImages = overrideImageSizing(imageContent)
   
   return (
     <div className="slide-layout-horizontal">
@@ -135,9 +188,9 @@ export function HorizontalLayout({ children }: { children: ReactNode }) {
           )}
         </div>
         <div className="slide-image-content flex flex-col justify-center space-y-4">
-          {imageContent.length > 0 ? (
+          {overriddenImages.length > 0 ? (
             <div className="space-y-4">
-              {imageContent}
+              {overriddenImages}
             </div>
           ) : (
             <div className="text-center text-gray-400 italic border-2 border-dashed border-gray-300 rounded-lg p-8">
