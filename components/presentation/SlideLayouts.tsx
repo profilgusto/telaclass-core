@@ -15,6 +15,34 @@ function splitContentByType(children: ReactNode) {
   const textContent: ReactNode[] = []
   const imageContent: ReactNode[] = []
   
+  // Helper function to recursively check if an element contains images
+  function containsImages(element: any): boolean {
+    if (!React.isValidElement(element)) return false
+    
+    // Direct image check
+    const isDirectImage = 
+      element.type === 'img' ||
+      element.type === 'figure' ||
+      (element.props && ((element.props as any).src || (element.props as any).alt)) ||
+      (typeof element.type === 'function' && /Img|Figure/i.test(element.type.name || '')) ||
+      (element.props && typeof (element.props as any).className === 'string' && (
+        (element.props as any).className.includes('mx-auto') ||
+        (element.props as any).className.includes('figure') ||
+        (element.props as any).className.includes('block') ||
+        (element.props as any).className.includes('text-center')
+      ))
+    
+    if (isDirectImage) return true
+    
+    // Recursively check children
+    if (element.props && (element.props as any).children) {
+      const children = React.Children.toArray((element.props as any).children)
+      return children.some(child => containsImages(child))
+    }
+    
+    return false
+  }
+  
   childArray.forEach((child) => {
     if (React.isValidElement(child)) {
       // Check if it's a heading/title element
@@ -43,37 +71,8 @@ function splitContentByType(children: ReactNode) {
          child.type.toString().includes('"h5"') ||
          child.type.toString().includes('"h6"'))
       
-      // Check if it's an image element
-      const isImage = 
-        // Direct image elements
-        child.type === 'img' ||
-        child.type === 'figure' ||
-        // Check for className patterns used by the MDX system
-        (child.props && typeof (child.props as any).className === 'string' && (
-          (child.props as any).className.includes('mx-auto') ||
-          (child.props as any).className.includes('figure') ||
-          (child.props as any).className.includes('block') ||
-          (child.props as any).className.includes('text-center')
-        )) ||
-        // Check if element has image-related props
-        (child.props && ((child.props as any).src || (child.props as any).alt)) ||
-        // Image components by function name
-        (typeof child.type === 'function' && /Img|Figure/i.test(child.type.name || '')) ||
-        // Check if it's a container with image children (recursive check)
-        (child.props && (child.props as any).children && 
-         React.Children.toArray((child.props as any).children).some((grandchild: any) => {
-           if (React.isValidElement(grandchild)) {
-             return (
-               grandchild.type === 'img' ||
-               grandchild.type === 'figure' ||
-               (typeof grandchild.type === 'function' && /Img/i.test(grandchild.type.name || '')) ||
-               (grandchild.props && ((grandchild.props as any).src || (grandchild.props as any).alt)) ||
-               (grandchild.props && typeof (grandchild.props as any).className === 'string' && 
-                (grandchild.props as any).className.includes('mx-auto'))
-             )
-           }
-           return false
-         }))
+      // Use the recursive helper to check for images
+      const isImage = containsImages(child)
       
       if (isTitle) {
         titleContent.push(child)
