@@ -19,7 +19,7 @@ export default function Slide({ children, className, ...rest }: { children: Reac
     <section
       {...rest}
       className={clsx(
-        isPresentation && 'relative mx-auto my-8 max-w-4xl px-6 py-8 rounded-2xl shadow-sm bg-[var(--bg)] text-[var(--fg)]',
+        isPresentation && 'relative mx-auto my-2 max-w-4xl px-6 py-6 rounded-2xl shadow-sm bg-[var(--bg)] text-[var(--fg)]',
         className
       )}
     >

@@ -98,7 +98,7 @@ export function VerticalLayout({ children }: { children: ReactNode }) {
     <div className="slide-layout-vertical">
       {/* Title section - full width */}
       {titleContent.length > 0 && (
-        <div className="slide-title-section mb-8">
+        <div className="slide-title-section mb-4">
           {titleContent}
         </div>
       )}
@@ -173,7 +173,7 @@ export function HorizontalLayout({ children }: { children: ReactNode }) {
     <div className="slide-layout-horizontal">
       {/* Title section - full width */}
       {titleContent.length > 0 && (
-        <div className="slide-title-section mb-8">
+        <div className="slide-title-section mb-4">
           {titleContent}
         </div>
       )}
