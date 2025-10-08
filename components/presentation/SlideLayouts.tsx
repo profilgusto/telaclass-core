@@ -8,15 +8,42 @@ interface SlideLayoutProps {
   layout?: string
 }
 
-// Helper to split children into text and image groups
+// Helper to split children into title, text and image groups
 function splitContentByType(children: ReactNode) {
   const childArray = React.Children.toArray(children)
+  const titleContent: ReactNode[] = []
   const textContent: ReactNode[] = []
   const imageContent: ReactNode[] = []
   
   childArray.forEach((child) => {
     if (React.isValidElement(child)) {
-      // Comprehensive image detection
+      // Check if it's a heading/title element
+      const isTitle = 
+        child.type === 'h1' ||
+        child.type === 'h2' ||
+        child.type === 'h3' ||
+        child.type === 'h4' ||
+        child.type === 'h5' ||
+        child.type === 'h6' ||
+        // Check for functions that render headings (from MDX system)
+        (typeof child.type === 'function' && (
+          child.type.name === 'h1' ||
+          child.type.name === 'h2' ||
+          child.type.name === 'h3' ||
+          child.type.name === 'h4' ||
+          child.type.name === 'h5' ||
+          child.type.name === 'h6'
+        )) ||
+        // Check if it's a function that generates heading elements (check string representation)
+        (typeof child.type === 'function' && 
+         child.type.toString().includes('"h1"') ||
+         child.type.toString().includes('"h2"') ||
+         child.type.toString().includes('"h3"') ||
+         child.type.toString().includes('"h4"') ||
+         child.type.toString().includes('"h5"') ||
+         child.type.toString().includes('"h6"'))
+      
+      // Check if it's an image element
       const isImage = 
         // Direct image elements
         child.type === 'img' ||
@@ -48,7 +75,9 @@ function splitContentByType(children: ReactNode) {
            return false
          }))
       
-      if (isImage) {
+      if (isTitle) {
+        titleContent.push(child)
+      } else if (isImage) {
         imageContent.push(child)
       } else {
         textContent.push(child)
@@ -58,41 +87,64 @@ function splitContentByType(children: ReactNode) {
     }
   })
   
-  return { textContent, imageContent }
+  return { titleContent, textContent, imageContent }
 }
 
 // Layout 1: Traditional vertical layout (default)
 export function VerticalLayout({ children }: { children: ReactNode }) {
+  const { titleContent, textContent, imageContent } = splitContentByType(children)
+  
   return (
     <div className="slide-layout-vertical">
-      {children}
+      {/* Title section - full width */}
+      {titleContent.length > 0 && (
+        <div className="slide-title-section mb-8">
+          {titleContent}
+        </div>
+      )}
+      
+      {/* Content section - vertical flow */}
+      <div className="slide-content-section space-y-4">
+        {textContent}
+        {imageContent}
+      </div>
     </div>
   )
 }
 
 // Layout 2: Horizontal split layout (text left, images right)
 export function HorizontalLayout({ children }: { children: ReactNode }) {
-  const { textContent, imageContent } = splitContentByType(children)
+  const { titleContent, textContent, imageContent } = splitContentByType(children)
   
   return (
-    <div className="slide-layout-horizontal grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 min-h-[50vh] items-start">
-      <div className="slide-text-content space-y-4 flex flex-col justify-center">
-        {textContent.length > 0 ? textContent : (
-          <div className="text-center text-gray-400 italic">
-            [Conteúdo de texto aqui]
-          </div>
-        )}
-      </div>
-      <div className="slide-image-content flex flex-col justify-center space-y-4">
-        {imageContent.length > 0 ? (
-          <div className="space-y-4">
-            {imageContent}
-          </div>
-        ) : (
-          <div className="text-center text-gray-400 italic border-2 border-dashed border-gray-300 rounded-lg p-8">
-            [Imagens serão exibidas aqui]
-          </div>
-        )}
+    <div className="slide-layout-horizontal">
+      {/* Title section - full width */}
+      {titleContent.length > 0 && (
+        <div className="slide-title-section mb-8">
+          {titleContent}
+        </div>
+      )}
+      
+      {/* Content section - two columns */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 min-h-[40vh] items-start">
+        <div className="slide-text-content space-y-4">
+          {textContent.length > 0 ? textContent : (
+            <div className="text-center text-gray-400 italic">
+              [Conteúdo de texto aqui]
+            </div>
+          )}
+        </div>
+        <div className="slide-image-content flex flex-col justify-center space-y-4">
+          {imageContent.length > 0 ? (
+            <div className="space-y-4">
+              {imageContent}
+            </div>
+          ) : (
+            <div className="text-center text-gray-400 italic border-2 border-dashed border-gray-300 rounded-lg p-8">
+              [Imagens serão exibidas aqui]
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
