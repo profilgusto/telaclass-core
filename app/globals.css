@@ -8,8 +8,8 @@
   --font-geist-mono: ui-monospace, SFMono-Regular, monospace;
   --radius: 0.625rem;
   /* Content font base (mobile/desktop). Tune these to scale all content text */
-  --content-font-mobile: 1.2rem;      /* default base for mobile */
-  --content-font-desktop: 1.5rem;  /* default base for ≥ md */
+  --content-font-mobile: 1.1rem;      /* default base for mobile */
+  --content-font-desktop: 1.3rem;  /* default base for ≥ md */
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -435,7 +435,7 @@ mjx-container:not([display="true"]) {
   font-size: 1.15rem;
   line-height: 1.6;
   /* Escalable list sizing variables */
-  --presentation-font-base-size: 2.5rem;
+  --presentation-font-base-size: 1.75rem;
   --list-step: 0.9; /* multiplier per nesting level */
 }
 
