@@ -2,6 +2,7 @@
 import React, { useMemo, cloneElement } from 'react'
 import Slide from '@/components/presentation/Slide'
 import YouTube from '@/components/YouTube'
+import Vimeo from '@/components/Vimeo'
 import { PresentOnly, TextOnly } from '@/components/presentation/Only'
 import { useViewMode } from '@/components/presentation/useViewMode'
 import VideoBase from '@/components/Video'
@@ -126,10 +127,10 @@ export function useMdxOverrides({ slug, mod }: OverrideDeps) {
         if (!el || typeof el !== 'object') return false
         const t = el.type
         // Known block components that render <div>/<iframe>/<section> etc.
-        if (t === YouTube || t === VideoBase || t === PDFBase || t === FileDownloadBase) return true
+        if (t === YouTube || t === Vimeo || t === VideoBase || t === PDFBase || t === FileDownloadBase) return true
         const name = typeof t === 'function' ? (t as any).name : ''
         if (typeof t === 'string') return ['div','section','iframe','figure','video','audio'].includes(t)
-        return /YouTube|Video|PDF|FileDownload/.test(name || '')
+        return /YouTube|Vimeo|Video|PDF|FileDownload/.test(name || '')
       }
 
       // Single media/image paragraph transformation
@@ -232,7 +233,8 @@ export function useMdxOverrides({ slug, mod }: OverrideDeps) {
       PresentOnly,
       TextOnly,
   ...MediaResolvers,
-  YouTube
+  YouTube,
+  Vimeo
     }
   }, [Paragraph, Img, A, MediaResolvers])
 
