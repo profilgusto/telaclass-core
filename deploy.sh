@@ -47,32 +47,45 @@ echo "==> Sync conteúdo MDX"
 rsync -azhv --delete --exclude '_bak/' "$LOCAL_CONTENT_DIR/" "$SSH_USER@$SSH_HOST:$REMOTE_CONTENT_DIR/" -e "ssh -p $SSH_PORT"
 
 echo "==> Preparar conteúdo dentro do diretório do app para build"
-ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" 'bash -s' <<REMOTE_SCRIPT
+ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" \
+  "REMOTE_APP_DIR='$REMOTE_APP_DIR' REMOTE_CONTENT_DIR='$REMOTE_CONTENT_DIR' APP_IMAGE_NAME='$APP_IMAGE_NAME' APP_IMAGE_LATEST='$APP_IMAGE_LATEST' COMPOSE_FILE='$COMPOSE_FILE' bash -s" << 'REMOTE_SCRIPT'
 set -e
-REMOTE_APP_DIR="$REMOTE_APP_DIR"
-REMOTE_CONTENT_DIR="$REMOTE_CONTENT_DIR"
-APP_IMAGE_NAME="$APP_IMAGE_NAME"
-APP_IMAGE_LATEST="$APP_IMAGE_LATEST"
-COMPOSE_FILE="$COMPOSE_FILE"
 
-mkdir -p "\${REMOTE_APP_DIR}/content/disciplinas"
-rsync -a --delete "\${REMOTE_CONTENT_DIR}/" "\${REMOTE_APP_DIR}/content/disciplinas/"
-cd "\${REMOTE_APP_DIR}"
+mkdir -p "${REMOTE_APP_DIR}/content/disciplinas"
+rsync -a --delete "${REMOTE_CONTENT_DIR}/" "${REMOTE_APP_DIR}/content/disciplinas/"
+cd "${REMOTE_APP_DIR}"
 
 echo "-> Ensuring traefik network exists (traefik_web)"
 docker network inspect traefik_web >/dev/null 2>&1 || docker network create traefik_web
 
-echo "-> Building image \${APP_IMAGE_NAME} (and tagging latest)"
-docker build -t "\${APP_IMAGE_NAME}" -t "\${APP_IMAGE_LATEST}" .
+echo "-> Building image ${APP_IMAGE_NAME} (and tagging latest)"
+docker build -t "${APP_IMAGE_NAME}" -t "${APP_IMAGE_LATEST}" .
 
-echo "-> Starting container via compose (\${COMPOSE_FILE})"
-docker compose -f "\${COMPOSE_FILE}" up -d --remove-orphans
+echo "-> Starting container via compose (${COMPOSE_FILE})"
+docker compose -f "${COMPOSE_FILE}" up -d --remove-orphans
 
 echo "-> Done. Current images:"
 docker images | grep telaclass-app || true
+
+echo "-> Cleaning up old telaclass-app images (unused)"
+# Keep only the currently built tag and the :latest tag; attempt to remove older tags
+KEEP_TAG_1="${APP_IMAGE_LATEST}"
+KEEP_TAG_2="${APP_IMAGE_NAME}"
+docker images --format '{{.Repository}}:{{.Tag}}' \
+  | awk '/^telaclass-app:/{print $1}' \
+  | while read -r ref; do
+      if [[ "$ref" != "$KEEP_TAG_1" && "$ref" != "$KEEP_TAG_2" ]]; then
+        echo "   removing $ref"
+        docker rmi "$ref" || true
+      fi
+    done
+
+echo "-> Pruning dangling images and layers"
+docker image prune -a || true
 REMOTE_SCRIPT
 
 echo "==> Deploy complete"
 echo "Check logs: ssh -p $SSH_PORT $SSH_USER@$SSH_HOST 'docker logs -f telaclass-app'"
 echo "Image built: $APP_IMAGE_NAME (also tagged latest)"
-echo "Optional: clean old images -> ssh -p $SSH_PORT $SSH_USER@$SSH_HOST 'docker image prune -f'"
+echo "Old images cleanup: performed automatically on remote."
+echo "Optional: extra prune (dangling/unused layers) -> ssh -p $SSH_PORT $SSH_USER@$SSH_HOST 'docker image prune -f'"
