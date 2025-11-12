@@ -8,6 +8,7 @@ import { useViewMode } from '@/components/presentation/useViewMode'
 import VideoBase from '@/components/Video'
 import PDFBase from '@/components/PDF'
 import FileDownloadBase from '@/components/FileDownload'
+import ExternalLinkBase from '@/components/ExternalLink'
 
 export interface OverrideDeps {
   slug: string
@@ -127,10 +128,10 @@ export function useMdxOverrides({ slug, mod }: OverrideDeps) {
         if (!el || typeof el !== 'object') return false
         const t = el.type
         // Known block components that render <div>/<iframe>/<section> etc.
-        if (t === YouTube || t === Vimeo || t === VideoBase || t === PDFBase || t === FileDownloadBase) return true
+        if (t === YouTube || t === Vimeo || t === VideoBase || t === PDFBase || t === FileDownloadBase || t === ExternalLinkBase) return true
         const name = typeof t === 'function' ? (t as any).name : ''
         if (typeof t === 'string') return ['div','section','iframe','figure','video','audio'].includes(t)
-        return /YouTube|Vimeo|Video|PDF|FileDownload/.test(name || '')
+        return /YouTube|Vimeo|Video|PDF|FileDownload|ExternalLink/.test(name || '')
       }
 
       // Single media/image paragraph transformation
@@ -234,7 +235,8 @@ export function useMdxOverrides({ slug, mod }: OverrideDeps) {
       TextOnly,
   ...MediaResolvers,
   YouTube,
-  Vimeo
+  Vimeo,
+  ExternalLink: ExternalLinkBase
     }
   }, [Paragraph, Img, A, MediaResolvers])
 
